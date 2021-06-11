@@ -1,0 +1,45 @@
+// -*- C++ -*-
+
+// material
+G4Material* vac_mat = new G4Material("vacuum", 1., 1.*g/mole, 1.e-20*g/cm3, kStateGas, 0.1*kelvin,
+				     1.e-20*bar);
+
+
+// parameter
+if(detector_param_num!=4 || detector_param[0]<=0 || detector_param[1]<=0 || detector_param[2]<=0
+   || detector_param[3]<=0){
+  G4cerr<<"BOX_1.0.0:  param is wrong !"<<G4endl;
+  G4cerr<<" parameter sample : length=100000[mm]  x=100[mm]  y=100[mm]  z=100[mm]"<<G4endl;
+  abort();
+}
+
+G4double bulk_l = detector_param[0]*mm;//100000*mm
+G4double box_x = detector_param[1]*mm;
+G4double box_y = detector_param[2]*mm;
+G4double box_z = detector_param[3]*mm;
+
+
+// geometry
+
+G4Box* bulk_box = new G4Box("bulk_box", 0.5*bulk_l, 0.5*bulk_l, 0.5*bulk_l);
+G4LogicalVolume* bulk_lv = new G4LogicalVolume(bulk_box, vac_mat, "bulk_lv");
+G4VisAttributes* bulk_att = new G4VisAttributes(1, red);  bulk_lv->SetVisAttributes(bulk_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "bulk_pv", bulk_lv, world_pv, false, 0);
+bulk_lv->SetUserLimits(user_limit);
+
+G4Box* SD_box = new G4Box("SD_box", 0.5*box_x, 0.5*box_y, 0.5*box_z);
+SD_lv = new G4LogicalVolume(SD_box, gas_mat, "SD_lv");
+G4VisAttributes* SD_att = new G4VisAttributes(1, red);  SD_lv->SetVisAttributes(SD_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.5*box_z), SD_lv, "SD_pv", bulk_lv, false, 0);
+SD_lv->SetUserLimits(user_limit);
+
+/*
+// sensitive detector
+if(TPCSD.Get()==0){
+  G4String name="/DMXDet/TPCSD";
+  DMXTPCSD* aSD = new DMXTPCSD(name,"tpcCollection");
+  TPCSD.Put(aSD);
+ }
+G4SDManager::GetSDMpointer()->AddNewDetector(TPCSD.Get()); 
+SetSensitiveDetector(SD_lv, TPCSD.Get());
+*/

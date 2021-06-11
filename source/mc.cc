@@ -14,11 +14,21 @@
 #include "mcParticleGunMessenger.hh"
 #include "mcAnalyzer.hh"
 
+#include "DMXDetectorConstruction.hh"
+#include "DMXPhysicsList.hh"
+#include "DMXPrimaryGeneratorAction.hh"
+#include "DMXEventAction.hh"
+#include "DMXTPCSD.hh"
+
 #include "mcRunManager.hh"
 
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
+#include "Randomize.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UIterminal.hh"
+#include "G4UItcsh.hh"
 #include "Randomize.hh"
 
 #ifdef G4UI_USE_XM
@@ -52,6 +62,9 @@ int main(int argc,char** argv)
     mcDetectorConstruction* detector = new mcDetectorConstruction();
     detector->SetAnalyzer(analyzer);
     runManager->SetUserInitialization(detector);
+
+	//DMXDetectorConstruction* detector = new DMXDetectorConstruction();
+	//runManager->SetUserInitialization(new DMXDetectorConstruction("detector_param.txt"));
     
     // Physics list
     G4VModularPhysicsList* physicsList = new QGSP_BERT;

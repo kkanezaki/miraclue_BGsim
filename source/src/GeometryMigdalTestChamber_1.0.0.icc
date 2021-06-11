@@ -1,0 +1,64 @@
+// -*- C++ -*-
+
+// material
+G4Material* vac_mat = new G4Material("vacuum", 1., 1.*g/mole, 1.e-20*g/cm3, kStateGas, 0.1*kelvin,
+				     1.e-20*bar);
+G4Material* SUS304_mat = new G4Material("SUS304", 8.03*g/cm3, 3);
+SUS304_mat->AddElement(elFe, 0.7);  SUS304_mat->AddElement(elNi, 0.1);
+SUS304_mat->AddElement(elCr, 0.2);
+
+// parameter
+if(detector_param_num!=6 || detector_param[0]<=0 || detector_param[1]<=0 || detector_param[2]<=0 ||
+   detector_param[3]<=0 || detector_param[4]<=0 || detector_param[5]<=0){
+  G4cerr<<"DefineMigdalTestChamber_1_0_0  param is wrong !"<<G4endl;
+  G4cerr<<" parameter sample : length=100000[mm]  x=300[mm]  y=300[mm]  z=300[mm]  buffer_t=30[mm]"
+	<<"  chamber_t=5[mm]"<<G4endl;
+  abort();
+}
+
+G4double bulk_l = detector_param[0]*mm;//100000*mm;
+G4double box_x = detector_param[1]*mm;
+G4double box_y = detector_param[2]*mm;
+G4double box_z = detector_param[3]*mm;
+G4double buffer_t = detector_param[4]*mm;
+G4double chamber_t = detector_param[5]*mm;
+
+// geometry
+
+G4Box* bulk_box = new G4Box("bulk_box", 0.5*bulk_l, 0.5*bulk_l, 0.5*bulk_l);
+G4LogicalVolume* bulk_lv = new G4LogicalVolume(bulk_box, vac_mat, "bulk_lv");
+G4VisAttributes* bulk_att = new G4VisAttributes(0, red);  bulk_lv->SetVisAttributes(bulk_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "bulk_pv", bulk_lv, world_pv, false, 0);
+bulk_lv->SetUserLimits(user_limit);
+
+G4Box* chamber_box = new G4Box("chamber_box", 0.5*box_x+buffer_t+chamber_t,
+			       0.5*box_y+buffer_t+chamber_t, 0.5*box_z+buffer_t+chamber_t);
+G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, SUS304_mat, "chamber_lv");
+G4VisAttributes* chamber_att = new G4VisAttributes(1, green);
+chamber_lv->SetVisAttributes(chamber_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.5*box_z), chamber_lv, "chamber_pv", bulk_lv, false, 0);
+chamber_lv->SetUserLimits(user_limit);
+
+G4Box* gas_box = new G4Box("gas_box", 0.5*box_x+buffer_t, 0.5*box_y+buffer_t, 0.5*box_z+buffer_t);
+G4LogicalVolume* gas_lv = new G4LogicalVolume(gas_box, gas_mat, "gas_lv");
+G4VisAttributes* gas_att = new G4VisAttributes(1, blue);  gas_lv->SetVisAttributes(gas_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv, "gas_pv", chamber_lv, false, 0);
+gas_lv->SetUserLimits(user_limit);
+
+G4Box* SD_box = new G4Box("SD_box", 0.5*box_x, 0.5*box_y, 0.5*box_z);
+SD_lv = new G4LogicalVolume(SD_box, gas_mat, "SD_lv");
+G4VisAttributes* SD_att = new G4VisAttributes(1, yellow);  SD_lv->SetVisAttributes(SD_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), SD_lv, "SD_pv", gas_lv, false, 0);
+SD_lv->SetUserLimits(user_limit);
+
+/*
+// sensitive detectors
+if(TPCSD.Get()==0){
+  G4String name="/DMXDet/TPCSD";
+  DMXTPCSD* aSD = new DMXTPCSD(name,"tpcCollection");
+  TPCSD.Put(aSD);
+ }
+G4SDManager::GetSDMpointer()->AddNewDetector(TPCSD.Get()); 
+SetSensitiveDetector(SD_lv, TPCSD.Get());
+*/
+

@@ -1,0 +1,55 @@
+// -*- C++ -*-
+
+// material
+G4Material* concrete_mat = new G4Material("concrete", 2.3*g/cm3, 6);
+concrete_mat->AddElement(elSi, 0.227915);  concrete_mat->AddElement(elO,  0.60541);
+concrete_mat->AddElement(elH,  0.09972 );  concrete_mat->AddElement(elCa, 0.04986);
+concrete_mat->AddElement(elAl, 0.014245);  concrete_mat->AddElement(elFe, 0.00285);
+G4Material* lab_mat = new G4Material("lab", 1.29*mg/cm3, 2); // air
+lab_mat->AddElement(elN, 0.7);  lab_mat->AddElement(elO, 0.3);
+G4Material* metalAl_mat = new G4Material("metalAl", 2.700*g/cm3, 1);
+metalAl_mat->AddElement(elAl, 1);
+
+// parameter
+G4double lab_w  = 11.5*m, lab_h = 11.5*m, concrete_t = 1.0*m, floor_h = 7.8*mm;
+G4double concrete_w = lab_w  + concrete_t, concrete_h = lab_h + concrete_t;
+
+// Concrete wall
+G4Box *concrete_box = new G4Box("concrete_box", 0.5*concrete_w, 0.5*concrete_h, 0.5*concrete_w);
+G4LogicalVolume* concrete_lv = new G4LogicalVolume(concrete_box, concrete_mat, "concrete_lv");
+G4VisAttributes* concrete_att = new G4VisAttributes(1, grey);
+concrete_lv->SetVisAttributes(concrete_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "concrete_pv", concrete_lv, world_pv, false, 0);
+concrete_lv->SetUserLimits(user_limit);
+
+// Lab air
+G4Box *lab_box = new G4Box("lab_box", 0.5*lab_w, 0.5*lab_h, 0.5*lab_w);
+G4LogicalVolume* lab_lv = new G4LogicalVolume(lab_box, lab_mat, "lab_lv");
+G4VisAttributes* lab_att = new G4VisAttributes(1, red); lab_lv->SetVisAttributes(lab_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), lab_lv, "lab_pv", concrete_lv, false, 0);
+lab_lv->SetUserLimits(user_limit);
+
+// Floor Al
+G4Box *floor_box = new G4Box("floor_box", 0.5*lab_w, 0.5*floor_h, 0.5*lab_w);
+G4LogicalVolume* floor_lv = new G4LogicalVolume(floor_box, metalAl_mat, "floor_lv");
+G4VisAttributes* floor_att = new G4VisAttributes(1, blue); floor_lv->SetVisAttributes(floor_att);
+new G4PVPlacement(0, G4ThreeVector(0.,-1.0*m,0.), floor_lv, "floor_pv", lab_lv, false, 0);
+floor_lv->SetUserLimits(user_limit);
+
+// Sensitive sphere
+G4Sphere *SD_sphere = new G4Sphere("SD_sphere", 0.,5.*cm, 0.,360.*deg, 0.,180.*deg);
+SD_lv = new G4LogicalVolume(SD_sphere, lab_mat, "SD_lv");
+G4VisAttributes* SD_att = new G4VisAttributes(1, yellow);  SD_lv->SetVisAttributes(SD_att);
+new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), SD_lv, "SD_pv", lab_lv, false, 0);
+SD_lv->SetUserLimits(user_limit);
+
+/*
+// sensitive detectors 
+if(TPCSD.Get()==0){
+  G4String name="/DMXDet/TPCSD";
+  DMXTPCSD* aSD = new DMXTPCSD(name,"tpcCollection");
+  TPCSD.Put(aSD);
+ }
+G4SDManager::GetSDMpointer()->AddNewDetector(TPCSD.Get()); 
+SetSensitiveDetector(SD_lv, TPCSD.Get());
+*/

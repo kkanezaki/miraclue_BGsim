@@ -1,0 +1,6 @@
+#detector MigdalTestLab_1.0.0
+detector BOX_1.0.0
+parameter 4 1000 300 300 300 //unit is [mm]
+pressure 8
+gastype 1 Xe 1.0
+stepsize 1.0 // unit is [mm]
