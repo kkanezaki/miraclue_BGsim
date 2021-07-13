@@ -141,6 +141,7 @@ class DMXParticleSource : public G4VPrimaryGenerator {
  private:
   DMXParticleSourceMessenger *theMessenger;
   G4Navigator *gNavigator;
+
 };
 #endif
 

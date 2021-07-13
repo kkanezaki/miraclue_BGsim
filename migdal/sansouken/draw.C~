@@ -1,0 +1,222 @@
+{
+
+  TCanvas *c = new TCanvas("c","c",1800,1200);  c->Divide(4,3,0.001,0.001);
+  for(int i=0; i<12; i++) c->cd(1+i)->SetMargin(0.12,0.1,0.12,0.12);
+
+  // data from sansouken
+  ifstream ifs("565keV-spc_mcnpant.dat");
+  TString dummy;  for(int i=0; i<51; i++) ifs >> dummy;
+  TString str_angle[5]={"0deg", "15deg", "30deg", "45deg", "60deg"};
+  TGraph *g_f[5];  for(int i=0; i<5; i++) g_f[i] = new TGraph();
+  TH1D   *h_f[5];  for(int i=0; i<5; i++) h_f[i] = new TH1D(Form("h_f_%d",i),Form("h_f_%d",i),400,0,1);
+  double e0, e1, f[5];
+  int g_index=0;
+  while(ifs >> e0 >> e1){
+    for(int i=0; i<5; i++) ifs >> f[i] >> dummy;
+    for(int i=0; i<5; i++) g_f[i]->SetPoint(g_index, (e0+e1)*0.5, f[i]);
+    for(int i=0; i<5; i++) h_f[i]->Fill((e0+e1)*0.5, f[i]);
+    g_index++;
+  }
+  c->cd(1)->DrawFrame(0,1e-18,1,1e-11,"565keV n; neutron energy [MeV]; neutron fluence per incident proton [/cm^2]");
+  c->cd(2)->DrawFrame(0,0,    1,1e-11,"565keV n; neutron energy [MeV]; neutron fluence per incident proton [/cm^2]");
+  c->cd(1)->SetLogy(1);
+  int color[5] = {1,2,4,3,6};
+  TLegend *leg = new TLegend(0.65,0.6,0.85,0.8);
+  for(int i=0; i<5; i++){
+    g_f[i]->SetLineColor(color[i]);
+    leg->AddEntry(g_f[i],str_angle[i],"l");
+    c->cd(1); g_f[i]->Draw("sameL");
+    c->cd(2); g_f[i]->Draw("sameL");
+  }
+  c->cd(1); leg->Draw();
+  c->cd(2); leg->Draw();
+
+
+  // fitted data from sansouken
+  double angle[5]={0,15,30,45,60};
+  double mean_fit[5]={0.569947, 0.555616, 0.518993, 0.465122, 0.402766};
+  double scale_fit[5]={6.80594e-12, 5.81385e-12, 5.03559e-12, 3.86675e-12, 2.75182e-12};
+
+  TGraph *g_angle_ene = new TGraph(5,angle,mean_fit);
+  TGraph *g_angle_prob = new TGraph(5,angle,scale_fit);
+
+  g_angle_ene->SetMarkerStyle(8);
+  g_angle_prob->SetMarkerStyle(8);
+
+  c->cd(3)->DrawFrame(0,0,180,0.7,"angle dependence of energy; #theta_{LAB} [deg]; energy [MeV]"); g_angle_ene->Draw("samePL");
+  c->cd(4)->DrawFrame(0,0,180,1e-11,"angle dependence of probability; #theta_{LAB} [deg]; prob [/cm^2]"); g_angle_prob->Draw("samePL");
+
+
+  // calculation for check      1p + 7Li --> 1n + 7Be -1.62MeV
+  TGraph *g_angle_ene_calc = new TGraph();
+  TH1D *h_ene = new TH1D("h_ene","E_neutron dist. (all angle);E_{neutron} [MeV]",100,0,0.7);
+  TH1D *h_ene2 = new TH1D("h_ene2","E_neutron dist. (scaling by 1/sin#theta_{LAB});E_{neutron} [MeV]",100,0,0.7);
+  TH1D *h_theta = new TH1D("h_theta","#theta_{LAB} dist. (all angle);#theta_{LAB} [deg]",100,0,180);
+  TH1D *h_theta2 = new TH1D("h_theta2","#theta_{LAB} dist. (scaling by 1/sin#theta_{LAB});#theta_{LAB} [deg]",100,0,180);
+  TH1D *h_costheta = new TH1D("h_costheta","cos#theta_{LAB} dist. (all angle);cos#theta_{LAB}",100,-1,1);
+
+  double m0=938.767, m1=6535.254, m2=939.5493, m3=6536.116;//MeV
+  double K0=2.3;//, Q=-1.63;//MeV
+  double Q=m0+m1-m2-m3;
+  cout<<" Q="<<Q<<" MeV"<<endl;
+  //K0 = -Q*m3/(m3-m0);
+
+  //  K0=3;
+  bool flag_relativistic = false;
+
+  TPaveText *pt = new TPaveText(0.1,0.1,0.9,0.9);  pt->SetFillColor(0);
+  pt->AddText("parameters for calc");
+  pt->AddText(Form("p:    m0=%g MeV",m0));
+  pt->AddText(Form("Li7: m1=%g MeV",m1));
+  pt->AddText(Form("n:    m2=%g MeV",m2));
+  pt->AddText(Form("Be7: m3=%g MeV",m3));
+  pt->AddText(Form("K0=%g MeV",K0));
+  pt->AddText(Form("(Q=%g MeV)",Q));
+  if(flag_relativistic) pt->AddText("calc: relativistic");
+  else                  pt->AddText("calc: non-relativistic");
+
+
+  double beta, gama, p2_cm, E2_cm;
+  if(flag_relativistic){
+    double E0=K0+m0;
+    double p0=sqrt(E0*E0-m0*m0);
+    double s=(E0+m1)*(E0+m1)-p0*p0;
+    beta=p0/(E0+m1);
+    gama=1./sqrt(1.-beta*beta);
+    double p0_cm = gama*p0-E0*beta*gama, p1_cm = -m1*beta*gama;
+    double E0_cm = sqrt(p0_cm*p0_cm + m0*m0), E1_cm = sqrt(p1_cm*p1_cm + m1*m1);
+    p2_cm = 1./2./sqrt(s)*sqrt(m3*m3*m3*m3 +m2*m2*m2*m2 +s*s -2.*(m2*m2*m3*m3 +m2*m2*s +m3*m3*s));
+    E2_cm = sqrt(p2_cm*p2_cm + m2*m2);
+  }else{
+    double p0=sqrt(2.*m0*K0);
+    beta=p0/(m0+m1);
+    double p0_cm = p0-m0*beta, p1_cm = -m1*beta;
+    double K0_cm = p0_cm*p0_cm/2./m0, K1_cm = p1_cm*p1_cm/2./m1;
+    p2_cm = sqrt(2.*(K0_cm+K1_cm+Q)*m2*m3/(m2+m3));
+  }
+  cout<<" p2_cm="<<p2_cm<<endl;
+
+  for(int i=0; i<100000; i++){
+    double costheta_cm = gRandom->Uniform(-1.,1.);
+    double sintheta_cm = sqrt(1.-costheta_cm*costheta_cm);
+    double p2_cm_x = p2_cm*costheta_cm;
+    double p2_cm_y = p2_cm*sintheta_cm;
+
+    double p2_y = p2_cm_y;
+    double p2_x, k2;
+    if(flag_relativistic){
+      p2_x = gama*p2_cm_x + E2_cm*beta*gama;
+      k2 = sqrt(p2_x*p2_x+p2_y*p2_y + m2*m2)-m2;
+    }else{
+      p2_x = p2_cm_x+m2*beta;
+      k2 = (p2_x*p2_x+p2_y*p2_y)/2./m2;
+    }
+
+    double costheta = p2_x/sqrt(p2_x*p2_x+p2_y*p2_y);
+    double sintheta = p2_y/sqrt(p2_x*p2_x+p2_y*p2_y);
+    double theta = TMath::ACos(costheta)*180./TMath::Pi();
+    g_angle_ene_calc->SetPoint(i,theta,k2);
+    h_ene->Fill(k2);
+    h_ene2->Fill(k2,1./sintheta);
+    h_theta->Fill(theta);
+    h_theta2->Fill(theta,1./sintheta);
+    h_costheta->Fill(costheta);
+  }
+
+  g_angle_ene_calc->SetMarkerColor(2);
+  c->cd(3);  g_angle_ene_calc->Draw("sameP");
+
+  h_theta->SetMinimum(0);
+  h_theta2->SetMinimum(0);
+  h_costheta->SetMinimum(0);
+  h_costheta->SetMaximum(1.2*h_costheta->GetMaximum());
+
+  c->cd(5);  h_ene->Draw();
+  c->cd(6);  h_ene2->Draw("hist");
+  c->cd(7);  h_theta->Draw();
+  c->cd(8);  h_theta2->Draw("hist");
+  c->cd(9);  h_costheta->Draw();
+  c->cd(10); pt->Draw();
+
+
+  c->Print("c.png");
+
+
+
+
+  TCanvas *c2 = new TCanvas("c2","c2",600,500);
+  c2->SetMargin(0.12,0.05,0.12,0.11);
+  TH1F *waku = c2->DrawFrame(0,0,180,0.7,"angle dependence of neutron energy; #theta_{LAB} [deg]; energy [MeV]");
+  waku->GetXaxis()->SetTitleSize(0.045);
+  waku->GetXaxis()->SetLabelSize(0.045);
+  waku->GetYaxis()->SetTitleSize(0.045);
+  waku->GetYaxis()->SetLabelSize(0.045);
+  g_angle_ene->Draw("samePL");
+  g_angle_ene_calc->Draw("sameP");
+  c2->Print("neutron_energy_angle.png");
+  c2->Print("neutron_energy_angle.eps");
+
+  /*
+  double Q=-1.62, E0=2.27;//  E0=1.85;
+
+  TGraph *g_angle_ene_calc = new TGraph();
+  TGraph *g_angle_prob_calc = new TGraph();
+  TGraph *g_angle_prob_calc_in_cos = new TGraph();
+  double costheta_cm_pre=1;
+  for(int i=01; i<100; i++){
+    double theta = 180*(double)i/100;
+    double costheta = TMath::Cos(theta/180*TMath::Pi());
+    double tmp = sqrt(E0)*costheta + sqrt(E0*costheta*costheta+48*E0+56*Q);
+    double E_n = tmp*tmp/8./8.;
+    g_angle_ene_calc->SetPoint(i, theta, E_n);
+
+    double v=1./8.*sqrt(2.*E0/1.);
+    double px_cm = sqrt(2.*1.*E_n)*costheta-1.*v;
+    double py_cm = sqrt(2.*1.*E_n)*sqrt(1.-costheta*costheta);
+    double costheta_cm = px_cm/sqrt(px_cm*px_cm+py_cm*py_cm);
+    double sintheta_cm = py_cm/sqrt(px_cm*px_cm+py_cm*py_cm);
+    double theta_cm = TMath::ACos(costheta_cm);
+    double theta_cm_pre = TMath::ACos(costheta_cm_pre);
+
+    cout<<"te theta="<<theta<<" c="<<costheta<<" theta_cm="<<theta_cm<<" dt_cm="<<theta_cm-theta_cm_pre
+	<<" c_cm="<<costheta_cm<<" s_cm="<<sintheta_cm<<flush;
+
+    g_angle_prob_calc->SetPoint(i, theta, 1e-14/(theta_cm-theta_cm_pre)/sintheta_cm);
+    g_angle_prob_calc_in_cos->SetPoint(i, costheta, 1e-14/(theta_cm-theta_cm_pre)/sintheta_cm);
+
+    cout<<" test "<<1e-14/(theta_cm-theta_cm_pre)/sintheta_cm<<endl;
+    //g_angle_prob_calc->SetPoint(i, theta, costheta_cm);
+    //if(costheta_cm!=costheta_cm_pre) g_angle_prob_calc->SetPoint(i, theta, 1.0/1000/(costheta_cm_pre-costheta_cm));
+    //else                             g_angle_prob_calc->SetPoint(i, theta, 1.0);
+    costheta_cm_pre = costheta_cm;
+  }
+
+  g_angle_ene_calc->SetLineColor(2);
+  c->cd(3);  g_angle_ene_calc->Draw("sameL");
+
+  g_angle_prob_calc->SetLineColor(2);
+  c->cd(4);  g_angle_prob_calc->Draw("sameL");
+
+  //  c->cd(5);  g_angle_prob_calc_in_cos->Draw("APL");
+
+  cout<<" E0="<<E0<<" Q="<<Q<<endl;
+  TH1D *h_prob_theta = new TH1D("h_prob_theta","h_prob_theta",100,0,180);
+  TH1D *h_prob_theta2 = new TH1D("h_prob_theta2","h_prob_theta2",100,0,180);
+  TH1D *h_prob_costheta = new TH1D("h_prob_costheta","h_prob_costheta",100,-1,1);
+  for(int i=0; i<10000; i++){
+    double costheta_cm = gRandom->Uniform(-1,1);
+    double sintheta_cm = sqrt(1-costheta_cm*costheta_cm);
+    double p_cm = 1./8.*sqrt( 14.*1.*(7.*E0 + 8.*Q) );
+    double v=1./8.*sqrt(2.*E0/1.);
+    double px = p_cm*costheta_cm+1.*v;
+    double py = p_cm*sintheta_cm;
+    double sintheta = py/sqrt(px*px+py*py);
+    double costheta = px/sqrt(px*px+py*py);
+    double theta = TMath::ACos(costheta) * 180./TMath::Pi();
+    cout<<" i="<<i<<" costheta="<<costheta<<" theta="<<theta<<" p_cm="<<p_cm<<endl;
+    h_prob_theta->Fill(theta);
+    h_prob_theta2->Fill(theta, 1./sintheta_cm);
+    h_prob_costheta->Fill(costheta);
+  }
+  */
+}

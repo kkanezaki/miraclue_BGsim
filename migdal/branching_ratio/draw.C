@@ -1,0 +1,60 @@
+{
+
+  const int n_Ar=5;
+  double ene_Ar[    n_Ar]={3.2e+3,          3.0e+2,          2.4e+2,                            2.7e+1,          1.3e+1                           };
+  double bra_Ar_ext[n_Ar]={1.3e-7 + 4.3e-8, 5.3e-6 + 1.8e-6, 4.3e-6 + 5.0e-6 + 3.0e-6 + 1.3e-6, 5.3e-7 + 1.1e-6, 7.9e-3 + 8.5e-3 + 4.0e-3 + 1.2e-3};
+  double bra_Ar_ion[n_Ar]={7.2e-5,          4.1e-4,          4.2e-3,                            1.2e-3,          7.4e-2                           };
+
+  const int n_Xe=11;
+  double ene_Xe[    n_Xe]={3.5e+4,  5.4e+3, 4.9e+3,          1.1e+3, 9.3e+2,          6.6e+2,          2.0e+2, 1.4e+2,          6.1e+1,          2.1e+1, 9.8            };
+  double bra_Xe_ext[n_Xe]={7.3e-10, 1.8e-8, 3.0e-8 + 6.5e-9, 2.7e-7, 3.4e-7 + 4.0e-7, 2.3e-9 + 4.3e-7, 3.1e-6, 4.1e-8 + 3.0e-5, 7.0e-7 + 1.5e-4, 1.2e-4, 3.6e-2 + 2.1e-2};
+  double bra_Xe_ion[n_Xe]={4.6e-6,  2.9e-5, 1.3e-4,          8.7e-5, 5.2e-4,          3.5e-4,          3.4e-4, 1.4e-3,          3.4e-2,          4.1e-4, 1.0e-1         };
+
+  TGraph *g_Ar_ext = new TGraph();  g_Ar_ext->SetMarkerStyle(5);  g_Ar_ext->SetMarkerColor(4);  g_Ar_ext->SetLineColor(4); 
+  TGraph *g_Ar_ion = new TGraph();  g_Ar_ion->SetMarkerStyle(8);  g_Ar_ion->SetMarkerColor(4);  g_Ar_ion->SetLineColor(4); 
+  TGraph *g_Xe_ext = new TGraph();  g_Xe_ext->SetMarkerStyle(5);  g_Xe_ext->SetMarkerColor(2);  g_Xe_ext->SetLineColor(2); 
+  TGraph *g_Xe_ion = new TGraph();  g_Xe_ion->SetMarkerStyle(8);  g_Xe_ion->SetMarkerColor(2);  g_Xe_ion->SetLineColor(2); 
+
+  for(int i=0; i<n_Ar; i++){
+    g_Ar_ext->SetPoint(i, ene_Ar[i]*0.001, bra_Ar_ext[i]);
+    g_Ar_ion->SetPoint(i, ene_Ar[i]*0.001, bra_Ar_ion[i]);
+  }
+
+  for(int i=0; i<n_Xe; i++){
+    g_Xe_ext->SetPoint(i, ene_Xe[i]*0.001, bra_Xe_ext[i]);
+    g_Xe_ion->SetPoint(i, ene_Xe[i]*0.001, bra_Xe_ion[i]);
+  }
+
+  TCanvas *c = new TCanvas("c","c",1000,800);
+  c->DrawFrame(5e-3,1e-10, 40.0,1.0,"branching ratio; E_{nl} [keV]; branching ratio");
+  c->SetLogx();  c->SetLogy();
+  g_Ar_ext->Draw("samePL");
+  g_Ar_ion->Draw("samePL");
+  g_Xe_ext->Draw("samePL");
+  g_Xe_ion->Draw("samePL");
+
+  TLegend *leg = new TLegend(0.15,0.15,0.45,0.35);
+  leg->AddEntry(g_Ar_ion,"Ar ionization","pl");
+  leg->AddEntry(g_Ar_ext,"Ar excitation","pl");
+  leg->AddEntry(g_Xe_ion,"Xe ionization","pl");
+  leg->AddEntry(g_Xe_ext,"Xe excitation","pl");
+  leg->Draw();
+
+
+  c->Print("branching_ratio.png");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

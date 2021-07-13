@@ -35,10 +35,11 @@
 #include "G4UIXm.hh"
 #endif
 
-#include "QGSP_BERT.hh"
+#include "QGSP_BERT_HP.hh"
+#include "LBE.hh"
 #include <iostream>
 
-int main(int argc,char** argv)
+int main(int argc, char** argv)
 {
     // Detect interactive mode (if no arguments) and define UI session
     //
@@ -46,7 +47,15 @@ int main(int argc,char** argv)
     if ( argc == 1 ) {
         ui = new G4UIExecutive(argc, argv);
     }
-    
+
+    G4String outputfile="out.dat";
+    /*
+    if ( argc==1 && argv[1]=="bat.mac"){
+        G4cout << "output filename : ";
+        G4cin >> outputfile;
+    }
+    */
+
     // Choose the Random engine
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     
@@ -55,22 +64,22 @@ int main(int argc,char** argv)
     
     // Construct the analyzer
     mcAnalyzer* analyzer = new mcAnalyzer();
-    analyzer->SetInit(true, "out.root");
+    analyzer->SetInit(false, outputfile);
     analyzer->Init();
     
     // Set mandatory initialization classes
     mcDetectorConstruction* detector = new mcDetectorConstruction();
     detector->SetAnalyzer(analyzer);
     runManager->SetUserInitialization(detector);
-
-	//DMXDetectorConstruction* detector = new DMXDetectorConstruction();
-	//runManager->SetUserInitialization(new DMXDetectorConstruction("detector_param.txt"));
     
     // Physics list
-    G4VModularPhysicsList* physicsList = new QGSP_BERT;
+    /*
+    G4VModularPhysicsList* physicsList = new LBE;
     physicsList->SetVerboseLevel(1);
     runManager->SetUserInitialization(physicsList);
-    
+    */
+    runManager->SetUserInitialization(new DMXPhysicsList());
+
     // Set user action classes
     G4VUserPrimaryGeneratorAction* gen_action = new mcPrimaryGeneratorAction(detector);
     runManager->SetUserAction(gen_action);

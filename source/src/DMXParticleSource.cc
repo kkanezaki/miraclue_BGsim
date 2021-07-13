@@ -59,8 +59,9 @@
 #include "G4PhysicalVolumeStore.hh"
 #include "G4ParticleTable.hh"
 #include "G4ParticleDefinition.hh"
-#include "G4IonTable.hh"
+
 #include "G4Ions.hh"
+#include "G4IonTable.hh"
 #include "G4TrackingManager.hh"
 #include "G4Track.hh"
 
@@ -159,28 +160,28 @@ G4ThreeVector DMXParticleSource::GeneratePointSource(){
 }
 
 G4ThreeVector DMXParticleSource::GeneratePointsInVolume(){
-  if(verbosityLevel >= 1 && SourcePosType != "Volume") G4cout << "Error SourcePosType not Volume" << G4endl;
-  if(verbosityLevel >= 2) G4cout<<"GeneratePointsinVolume shape="<<Shape<<G4endl;
-  G4ThreeVector RandPos;  G4double x=0., y=0., z=0.;
-  if(Shape == "Sphere"){
-    x = Radius*2.;  y = Radius*2.;  z = Radius*2.;
-    while(((x*x)+(y*y)+(z*z)) > (Radius*Radius)){
-      x = G4UniformRand();       y = G4UniformRand();       z = G4UniformRand();
-      x = (x*2.*Radius)-Radius;  y = (y*2.*Radius)-Radius;  z = (z*2.*Radius)-Radius;
-    }
-  }else if(Shape == "Cylinder"){
-    x = Radius*2.;  y = Radius*2.;
-    while(1){
-      x = G4UniformRand();       y = G4UniformRand();       z = G4UniformRand();
-      x = (x*2.*Radius)-Radius;  y = (y*2.*Radius)-Radius;  z = (z*2.*Halfz)-Halfz;
-      if( x*x+y*y < Radius*Radius ) break;
-    }
-  }else if(Shape == "Box"){
-    x = G4UniformRand();     y = G4UniformRand();     z = G4UniformRand();
-    x = (x*2.*Halfx)-Halfx;  y = (y*2.*Halfy)-Halfy;  z = (z*2.*Halfz)-Halfz;
-  }else{ G4cout << "Error: Volume Shape (" << Shape << ") Does Not Exist" << G4endl;  exit(1); }
-  RandPos.setX(x);  RandPos.setY(y);  RandPos.setZ(z);
-  return CentreCoords + RandPos;
+    if(verbosityLevel >= 1 && SourcePosType != "Volume") G4cout << "Error SourcePosType not Volume" << G4endl;
+    if(verbosityLevel >= 2) G4cout<<"GeneratePointsinVolume shape="<<Shape<<G4endl;
+    G4ThreeVector RandPos;  G4double x=0., y=0., z=0.;
+    if(Shape == "Sphere"){
+        x = Radius*2.;  y = Radius*2.;  z = Radius*2.;
+        while(((x*x)+(y*y)+(z*z)) > (Radius*Radius)){
+            x = G4UniformRand();       y = G4UniformRand();       z = G4UniformRand();
+            x = (x*2.*Radius)-Radius;  y = (y*2.*Radius)-Radius;  z = (z*2.*Radius)-Radius;
+        }
+    }else if(Shape == "Cylinder"){
+        x = Radius*2.;  y = Radius*2.;
+        while(1){
+            x = G4UniformRand();       y = G4UniformRand();       z = G4UniformRand();
+            x = (x*2.*Radius)-Radius;  y = (y*2.*Radius)-Radius;  z = (z*2.*Halfz)-Halfz;
+            if( x*x+y*y < Radius*Radius ) break;
+        }
+    }else if(Shape == "Box"){
+        x = G4UniformRand();     y = G4UniformRand();     z = G4UniformRand();
+        x = (x*2.*Halfx)-Halfx;  y = (y*2.*Halfy)-Halfy;  z = (z*2.*Halfz)-Halfz;
+    }else{ G4cout << "Error: Volume Shape (" << Shape << ") Does Not Exist" << G4endl;  exit(1); }
+    RandPos.setX(x);  RandPos.setY(y);  RandPos.setZ(z);
+    return CentreCoords + RandPos;
 }
 
 G4bool DMXParticleSource::IsSourceConfined(G4ThreeVector pos){
@@ -328,7 +329,7 @@ G4double DMXParticleSource::GenerateCharge(G4ParticleDefinition *pd){
 void DMXParticleSource::GeneratePrimaryVertex(G4Event *evt){
   if(     Mode == "Default"        ) GeneratePrimaryVertex_Default(evt);
   else if(Mode == "0nbb"           ) GeneratePrimaryVertex_0nbb(evt);
-  else if(Mode == "File"           ) GeneratePrimaryVertex_File(evt);
+  else if(Mode == "File"           ) GeneratePrimaryVertex_File(evt); //HEPEvt
   else if(Mode == "nAIST565"       ) GeneratePrimaryVertex_nAIST565(evt);
   else if(Mode == "gAIST565_1.0.1" ) GeneratePrimaryVertex_gAIST565_1_0_1(evt);
   else if(Mode == "gAIST565_1.0.3" ) GeneratePrimaryVertex_gAIST565_1_0_3(evt);

@@ -1,0 +1,27 @@
+{
+  double M_n=939.5693;//MeV
+  double M_u=931.4941024;
+  double N_Xe=131.293;
+  double N_Ar=39.948;
+  double M_Xe=N_Xe*u;//MeV
+  double M_Ar=N_Ar*u;//MeV
+  double E_n=565;//keV
+  double M_e=511;//keV
+  double E_Xe=4*M_n*M_Xe/(M_n+M_Xe)/(M_n+M_Xe)*E_n;
+  double E_Ar=4*M_n*M_Ar/(M_n+M_Ar)/(M_n+M_Ar)*E_n;
+  double q2_Xe=2*M_e*M_e*E_Xe/M_Xe;
+  double q2_Ar=2*M_e*M_e*E_Ar/M_Ar;
+  double scaling_Xe=q2_Xe/511./511.;
+  double scaling_Ar=q2_Ar/511./511.;
+  cout<<"Ar: E_max="<<E_Ar<<" q_max="<<sqrt(q2_Ar)<<" scaling="<<scaling_Ar<<endl;
+  cout<<"Xe: E_max="<<E_Xe<<" q_max="<<sqrt(q2_Xe)<<" scaling="<<scaling_Xe<<endl;
+
+
+
+
+
+
+
+
+
+}

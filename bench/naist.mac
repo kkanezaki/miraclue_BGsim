@@ -1,0 +1,13 @@
+#/process/em/fluo true
+#/process/em/auger true
+#/process/em/augerCascade true
+
+/run/setCut 0.01 mm
+
+/gun/usr/mode nAIST565
+/gun/usr/particle neutron
+
+/run/initialize
+
+/run/beamOn 10000
+

@@ -61,19 +61,31 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     
     //if ( aTrack->GetDefinition()->GetPDGCharge() == 0.0) return false;
     //G4cout << aTrack->GetDefinition()->GetPDGEncoding() << G4endl;
-    // Sensitive to neutron only
-    //if ( aTrack->GetDefinition()->GetPDGEncoding() != 2112) return false;
+    // Sensitive to except for neutrons
+    //if ( aTrack->GetDefinition()->GetPDGEncoding() == 2112) return false;
     
     //Check Energy deposit
     G4double eLoss = aStep->GetTotalEnergyDeposit();
-    //if (eLoss <= 0.0 ) return false;
+    //if (eLoss = 0.0 ) return false;
     G4double time = aTrack->GetGlobalTime();
     
     G4int copyNO = aStep->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber();
+    G4int trackID = aTrack->GetTrackID();
+    // Igrone initial particle
+    if (trackID == 1) return false;
+
     G4int NbHits = sensorCollection->entries();
     G4bool found = false;
+
+    /*
     for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
-        found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) ;
+            (*sensorCollection)[iHit]->AddEdep(eLoss);
+            return true;
+    }
+    */
+
+    for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
+        found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) && (trackID == (*sensorCollection)[iHit]->GetTrackID() ) ;
         if (found) {
             // check time
             if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) {
@@ -83,6 +95,7 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
             }
         }
     }
+
     
     mcSensorHit* newHit = new mcSensorHit();
     G4double eIn = aStep->GetPreStepPoint()->GetKineticEnergy();

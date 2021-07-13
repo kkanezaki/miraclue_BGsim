@@ -1,0 +1,12 @@
+{
+  ifstream ifs("Ar.txt");
+  int ii=0;
+  double ene, xsec, xsec_avg=0;
+  while(ifs >> ene >> xsec){
+    xsec_avg += xsec;
+    ii++;
+  }
+  xsec_avg /= (double)ii;
+  cout<<"xsec_avg="<xsec_avg<<endl;
+
+}

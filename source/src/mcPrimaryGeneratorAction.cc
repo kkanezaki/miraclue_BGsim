@@ -1,3 +1,6 @@
+
+
+
 #include "mcPrimaryGeneratorAction.hh"
 #include "mcParticleGun.hh"
 #include "mcDetectorConstruction.hh"
@@ -12,11 +15,13 @@
 #include "G4SystemOfUnits.hh"
 #include "G4PhysicalConstants.hh"
 
+
 mcPrimaryGeneratorAction::mcPrimaryGeneratorAction(const mcDetectorConstruction* mcDC)
 :particleTable(G4ParticleTable::GetParticleTable())
 //,mcDetector(mcDC)
 {
-    particleGun = new mcParticleGun();
+    G4String filename; //とりあえず
+    particleGun = new mcParticleGun(filename);
     G4ParticleDefinition* particle = particleTable->FindParticle("geantino");
     particleGun->SetParticleDefinition(particle);
     particleGun->SetParticleMomentumDirection(G4ThreeVector(1.0,0.0,0.0));
@@ -26,6 +31,16 @@ mcPrimaryGeneratorAction::mcPrimaryGeneratorAction(const mcDetectorConstruction*
     
 }
 
+/*
+mcPrimaryGeneratorAction::mcPrimaryGeneratorAction(const mcDetectorConstruction* mcDC, G4int s0, G4int s1, G4String filename)
+:particleTable(G4ParticleTable::GetParticleTable())
+{
+    particleGun = new mcParticleGun(filename);
+    seeds[0] = s0;
+    seeds[1] = s1;
+    CLHEP::HepRandom::setTheSeeds(seeds);
+}
+*/
 
 
 mcPrimaryGeneratorAction::~mcPrimaryGeneratorAction()

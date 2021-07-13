@@ -21,12 +21,20 @@ public:
     
     void SetNewValue(G4UIcommand*, G4String);
     G4String GetCurrentValue(G4UIcommand* command);
+
+private:
+    G4ParticleTable *particleTable;
+
 private:
     mcParticleGun*		mcPG;
     G4UIdirectory*			cmdDir;
     G4UIcmdWithAnInteger*		vtxCmd;
     G4UIcmdWithAnInteger*		parCmd;
     G4UIcmdWithADoubleAndUnit*  eneCmd;
+
+    G4UIcmdWithAString         *modeCmd;
+    G4UIcmdWithAString         *typeCmd;
+    G4UIcmdWithAString         *particleCmd;
     
 };
 
