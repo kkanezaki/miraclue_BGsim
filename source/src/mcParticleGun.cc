@@ -95,7 +95,7 @@ monoEnergy(1.0*keV),pMessenger(0)
 
 mcParticleGun::mcParticleGun(G4String filename){
     verbosityLevel = 2;
-    Mode = "nAIST565";
+    Mode = "Default";
     SourcePosType = "Volume";
     Shape = "NULL";
     Halfx = 0.0;
@@ -225,9 +225,9 @@ G4double mcParticleGun::GenerateCharge(G4ParticleDefinition *pd){
 
 
 void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
-    if(     Mode == "File"           ) GeneratePrimaryVertex_File(anEvent); //HEPEvt
+    if     (Mode == "Default"        ) GeneratePrimaryVertex_Default(anEvent);
+    else if(Mode == "File"           ) GeneratePrimaryVertex_File(anEvent); //HEPEvt
     else if(Mode == "nAIST565"       ) GeneratePrimaryVertex_nAIST565(anEvent);
-    //else if(Mode == "Default"        ) GeneratePrimaryVertex_Default(anEvent);
     //else if(Mode == "gAIST565_1.0.1" ) GeneratePrimaryVertex_gAIST565_1_0_1(anEvent);
     //else if(Mode == "gAIST565_1.0.3" ) GeneratePrimaryVertex_gAIST565_1_0_3(anEvent);
     else{ G4cout<<" ERROR : Mode has unusual value"<<G4endl;  return; }
@@ -291,11 +291,11 @@ void mcParticleGun::GeneratePrimaryVertex_File(G4Event *anEvent){
 }
 
 
-/*
-void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent)
+
+void mcParticleGun::GeneratePrimaryVertex_Default(G4Event* anEvent)
 {
     G4ThreeVector vPos;
-    if(positionFlag == Top)				vPos = PutTop();
+    if      (positionFlag == Top)		vPos = PutTop();
     else if (positionFlag == Centre)	vPos = PutCentre();
     else if (positionFlag == flux)  	vPos = PutFlux();
     else 								vPos = particle_position;
@@ -339,7 +339,6 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent)
     }
     anEvent->AddPrimaryVertex(vertex);
 }
-*/
 
 void mcParticleGun::GenerateNeutron(G4PrimaryParticle* neutron[1])
 {

@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         ui = new G4UIExecutive(argc, argv);
     }
 
-    G4String outputfile="out.dat";
+    G4String outputfile="out.root";
     /*
     if ( argc==1 && argv[1]=="bat.mac"){
         G4cout << "output filename : ";
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     
     // Construct the analyzer
     mcAnalyzer* analyzer = new mcAnalyzer();
-    analyzer->SetInit(false, outputfile);
+    analyzer->SetInit(true, outputfile);
     analyzer->Init();
     
     // Set mandatory initialization classes

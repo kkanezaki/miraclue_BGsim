@@ -4593,6 +4593,9 @@ source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleGun.hh
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleGunMessenger.hh
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleMomentum.hh
+source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleTable.hh
+source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleTable.icc
+source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ParticleTableIterator.hh
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4PhysicalConstants.hh
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4PrimaryParticle.hh
 source/CMakeFiles/mc.dir/src/mcParticleGunMessenger.cc.o: /opt/geant4/10.6.3/include/Geant4/G4PrimaryVertex.hh

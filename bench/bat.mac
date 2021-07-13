@@ -20,5 +20,5 @@
 
 /run/initialize
 
-/run/beamOn 50000
+/run/beamOn 10000
 

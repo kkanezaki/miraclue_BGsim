@@ -1,6 +1,3 @@
-
-
-
 #include "mcPrimaryGeneratorAction.hh"
 #include "mcParticleGun.hh"
 #include "mcDetectorConstruction.hh"
