@@ -78,6 +78,7 @@ int main(int argc, char** argv)
     physicsList->SetVerboseLevel(1);
     runManager->SetUserInitialization(physicsList);
     */
+
     runManager->SetUserInitialization(new DMXPhysicsList());
 
     // Set user action classes

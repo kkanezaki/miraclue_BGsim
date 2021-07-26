@@ -87,13 +87,26 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
                                   0);			     //copy number
     */
 
-    G4Element* elO  = new G4Element("O",  "O",  8.,  15.99943*g/mole);
+    //element
+    G4Element* elH  = new G4Element("H",  "H",  1.,  1.007947*g/mole);
+    G4Element* elB  = new G4Element("B",  "B",  5.,  10.8117*g/mole);
+    G4Element* elC  = new G4Element("C",  "C",  6.,  12.0107*g/mole);
     G4Element* elN  = new G4Element("N",  "N",  7.,  14.00672*g/mole);
+    G4Element* elO  = new G4Element("O",  "O",  8.,  15.99943*g/mole);
+    G4Element* elAl = new G4Element("Al", "Al", 13., 26.981538613*g/mole);
+    G4Element* elSi = new G4Element("Si", "Si", 14., 28.08553*g/mole);
     G4Element* elAr = new G4Element("Ar", "Ar", 18., 39.948*g/mole);
+    G4Element* elCa = new G4Element("Ca", "Ca", 20., 40.078*g/mole);
+    G4Element* elCr = new G4Element("Cr", "Cr", 24., 51.9961*g/mole);
+    G4Element* elFe = new G4Element("Fe", "Fe", 26., 55.8452*g/mole);
+    G4Element* elNi = new G4Element("Ni", "Ni", 28., 58.6934*g/mole);
     G4Element* elXe = new G4Element("Xe", "Xe", 54., 131.293*g/mole);
+    G4Element* elPb = new G4Element("Pb", "Pb", 82., 207.2*g/mole);
+
     G4Material* vac_mat = new G4Material("vacuum", 1., 1.*g/mole, 1.e-20*g/cm3, kStateGas, 0.1*kelvin, 1.e-20*bar);
     world_mat = new G4Material("world", 1.29*mg/cm3, 3); // air
     world_mat->AddElement(elN, 0.76);  world_mat->AddElement(elO, 0.23); world_mat->AddElement(elAr, 0.01);
+
     G4double world_l = 100.0*m;
     G4Box* world_box = new G4Box("world_box", world_l, world_l, world_l);
     G4LogicalVolume* world_lv = new G4LogicalVolume( world_box, vac_mat, "world", 0, 0, 0);
@@ -125,7 +138,8 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
     G4double test_l = 300*mm;
 
-    //for background saigen
+    //////////////////////////////// devided gas box (for Intrinsic BG) ////////////////////////////////
+    /*
     G4int Ndiv_x = 15;
     G4int Ndiv_y = 15;
     G4int Ndiv_z = 15;
@@ -152,6 +166,50 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4VisAttributes* rep3_att = new G4VisAttributes(1, blue);  rep3_lv->SetVisAttributes(rep3_att);
     new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, test_l/Ndiv_x);
 
+    */
+    /////////////////////////////////////////  for chamber BG //////////////////////////////////////////
+
+    G4Material* SUS304 = new G4Material("SUS304", 8.03*g/cm3, 3);
+    SUS304->AddElement(elFe, 0.7); SUS304->AddElement(elNi, 0.1); SUS304->AddElement(elCr, 0.2);
+    G4Material* metalAl_mat = new G4Material("metalAl", 2.700*g/cm3, 1);
+    metalAl_mat->AddElement(elAl, 1);
+
+    G4double chamber_width = 3*mm; //SUS 3mm, Al 5mm, pula 1cm
+
+    G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
+    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, SUS304, "chamber_lv");
+    G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
+    G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
+    chamber_lv->SetUserLimits(user_limit);
+
+
+    G4Box* vac_box = new G4Box("vac_box", 0.5*chamber_t*mm, 0.5*chamber_t, 0.5*chamber_t);
+    G4LogicalVolume* vac_lv = new G4LogicalVolume(vac_box, vac_mat, "vac_lv");
+    G4VisAttributes* vac_att = new G4VisAttributes(1, red);  vac_lv->SetVisAttributes(vac_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "vac_pv", vac_lv, chamber_pv, false, 0);
+    vac_lv->SetUserLimits(user_limit);
+
+
+    ///////////////////////////////////////////// sandbox ///////////////////////////////////////////////
+    /*
+    G4Material* Pb_mat = new G4Material("Pb", 11.2*g/cm3, 1);
+    Pb_mat->AddElement(elPb,1);
+    G4Material* Polyeth = new G4Material("Polyeth",0.95*g/cm3,2);
+    Polyeth->AddElement(elH, 0.66); Polyeth->AddElement(elC,0.34);
+    G4Material* Polyeth_B2O3 = new G4Material("Polyeth_B2O3", 1.04*g/cm3, 4);
+    Polyeth_B2O3->AddElement(elH,0.59); Polyeth_B2O3->AddElement(elC,0.33);
+    Polyeth_B2O3->AddElement(elB,0.03); Polyeth_B2O3->AddElement(elO,0.05);
+
+    G4double l_mat_test = 1000*mm;
+
+    G4Box* mat_test_box = new G4Box("mat_test", 0.5*l_mat_test*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
+    G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, SUS304, "mat_test_lv");
+    G4VisAttributes* mat_test_att = new G4VisAttributes(1, blue);  mat_test_lv->SetVisAttributes(mat_test_att);
+    G4PVPlacement* mat_test_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),
+                                                   "mat_test_pv", mat_test_lv, world_pv, false, 0);
+    mat_test_lv->SetUserLimits(user_limit);
+    */
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*
     G4Box* sensor_box = new G4Box("sonsor", 10*mm, 0.5*test_l, 0.5*test_l);
@@ -189,15 +247,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     SD_lv->SetUserLimits(user_limit);
     */
 
-    // geometry of Lab
+    ///////////////////////////////////////// geometry of Lab /////////////////////////////////////////
     /*
     //material
-    G4Element* elH  = new G4Element("H",  "H",  1.,  1.007947*g/mole);
-    G4Element* elAl = new G4Element("Al", "Al", 13., 26.981538613*g/mole);
-    G4Element* elSi = new G4Element("Si", "Si", 14., 28.08553*g/mole);
-    G4Element* elCa = new G4Element("Ca", "Ca", 20., 40.078*g/mole);
-    G4Element* elFe = new G4Element("Fe", "Fe", 26., 55.8452*g/mole);
-
     G4Material* concrete_mat = new G4Material("concrete", 2.3*g/cm3, 6);
     concrete_mat->AddElement(elSi, 0.227915);  concrete_mat->AddElement(elO,  0.60541);
     concrete_mat->AddElement(elH,  0.09972 );  concrete_mat->AddElement(elCa, 0.04986);
@@ -206,6 +258,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     lab_mat->AddElement(elN, 0.7);  lab_mat->AddElement(elO, 0.3);
     G4Material* metalAl_mat = new G4Material("metalAl", 2.700*g/cm3, 1);
     metalAl_mat->AddElement(elAl, 1);
+
     // parameter
     G4double lab_w  = 11.5*m, lab_h = 11.5*m, concrete_t = 1.0*m, floor_h = 7.8*mm;
     G4double concrete_w = lab_w  + concrete_t, concrete_h = lab_h + concrete_t;
@@ -233,6 +286,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     new G4PVPlacement(0, G4ThreeVector(0.,-1.0*m,0.), floor_lv, "floor_pv", lab_lv, false, 0);
     floor_lv->SetUserLimits(user_limit);
     */
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sensor
     /*
@@ -260,7 +314,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
     //logicSensor->SetSensitiveDetector(aSensorSD);
     //test_lv->SetSensitiveDetector(aSensorSD);
-    rep3_lv->SetSensitiveDetector(aSensorSD);
+    //rep3_lv->SetSensitiveDetector(aSensorSD);
+    //mat_test_lv->SetSensitiveDetector(aSensorSD);
+    vac_lv->SetSensitiveDetector(aSensorSD);
 
     /*
     // Set UserLimits
