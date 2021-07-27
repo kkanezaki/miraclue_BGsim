@@ -179,15 +179,17 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, SUS304, "chamber_lv");
     G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
-    G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
+    //G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
     chamber_lv->SetUserLimits(user_limit);
 
 
     G4Box* vac_box = new G4Box("vac_box", 0.5*chamber_t*mm, 0.5*chamber_t, 0.5*chamber_t);
     G4LogicalVolume* vac_lv = new G4LogicalVolume(vac_box, vac_mat, "vac_lv");
     G4VisAttributes* vac_att = new G4VisAttributes(1, red);  vac_lv->SetVisAttributes(vac_att);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "vac_pv", vac_lv, chamber_pv, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), vac_lv, "vac_pv", chamber_lv, false, 0);
     vac_lv->SetUserLimits(user_limit);
+
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
 
 
     ///////////////////////////////////////////// sandbox ///////////////////////////////////////////////
