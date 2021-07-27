@@ -3,6 +3,7 @@ bin/*
 bench/*.out
 bench/G4History.macro
 bench/*.root
+bench/*.dat
 bench/currentEvent.rndm
 bench/currentRun.rndm
 vis/*
