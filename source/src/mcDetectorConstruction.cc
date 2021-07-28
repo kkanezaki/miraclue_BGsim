@@ -173,11 +173,14 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     SUS304->AddElement(elFe, 0.7); SUS304->AddElement(elNi, 0.1); SUS304->AddElement(elCr, 0.2);
     G4Material* metalAl_mat = new G4Material("metalAl", 2.700*g/cm3, 1);
     metalAl_mat->AddElement(elAl, 1);
+    G4Material* plastic = new G4Material("plastic", 1.2*g/cm3, 3);
+    plastic->AddElement(elH, 0.6); plastic->AddElement(elC, 0.3); plastic->AddElement(elO, 0.1);
 
-    G4double chamber_width = 3*mm; //SUS 3mm, Al 5mm, pula 1cm
+    auto chamber_mat = plastic;
+    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, pula 1cm
 
     G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
-    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, SUS304, "chamber_lv");
+    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
     G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
     //G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
     chamber_lv->SetUserLimits(user_limit);
@@ -205,7 +208,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4double l_mat_test = 1000*mm;
 
     G4Box* mat_test_box = new G4Box("mat_test", 0.5*l_mat_test*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
-    G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, SUS304, "mat_test_lv");
+    G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, Pb_mat, "mat_test_lv");
     G4VisAttributes* mat_test_att = new G4VisAttributes(1, blue);  mat_test_lv->SetVisAttributes(mat_test_att);
     G4PVPlacement* mat_test_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),
                                                    "mat_test_pv", mat_test_lv, world_pv, false, 0);
