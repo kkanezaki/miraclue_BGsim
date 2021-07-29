@@ -5,7 +5,7 @@
 
 #include "DMXDetectorConstruction.hh"
 #include "DMXDetectorMaterial.ihh"
-#include "DMXTPCSD.hh"
+//#include "DMXTPCSD.hh"
 
 #include "G4Material.hh"
 #include "G4Box.hh"
@@ -171,13 +171,18 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
     G4Material* SUS304 = new G4Material("SUS304", 8.03*g/cm3, 3);
     SUS304->AddElement(elFe, 0.7); SUS304->AddElement(elNi, 0.1); SUS304->AddElement(elCr, 0.2);
-    G4Material* metalAl_mat = new G4Material("metalAl", 2.700*g/cm3, 1);
-    metalAl_mat->AddElement(elAl, 1);
-    G4Material* plastic = new G4Material("plastic", 1.2*g/cm3, 3);
-    plastic->AddElement(elH, 0.6); plastic->AddElement(elC, 0.3); plastic->AddElement(elO, 0.1);
+    G4Material* metalAl = new G4Material("metalAl", 2.700*g/cm3, 1);
+    metalAl->AddElement(elAl, 1);
+    G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
+    acrylic->AddElement(elH, 8); acrylic->AddElement(elC, 5); acrylic->AddElement(elO, 2);
+    G4Material* Polyeth = new G4Material("Polyeth",0.95*g/cm3,2);
+    Polyeth->AddElement(elH, 2); Polyeth->AddElement(elC,1);
 
-    auto chamber_mat = plastic;
-    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, pula 1cm
+    G4Material* metalPb = new G4Material("metalPb", 11.2*g/cm3, 1);
+    metalPb->AddElement(elPb,1);
+
+    auto chamber_mat = acrylic;
+    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, pla 1cm
 
     G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
@@ -421,6 +426,12 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* MPPC = new G4Material("MPPC", 1.0*g/cm3, 2);//??????
     MPPC->AddElement(Al,2); MPPC->AddElement(O,3);
 
+    G4Material* Polyeth = new G4Material("Polyeth",0.95*g/cm3,2);
+    Polyeth->AddElement(H, 2); Polyeth->AddElement(C,1);
+
+    G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
+    acrylic->AddElement(H, 8); acrylic->AddElement(C, 5); acrylic->AddElement(O, 2);
+
     G4Material* polystyrene = new G4Material("polystyrene", 1.05*g/cm3, 2);
     polystyrene->AddElement(C,1); polystyrene->AddElement(H,1);
 
@@ -533,6 +544,7 @@ void mcDetectorConstruction::DefineMaterials()
     BC501A->AddElement(H, 482); BC501A->AddElement(C, 398);
 
     // assign materials
+    /*
     world_mat = concrete;
     lab_mat = Air;
     air_mat = Air;
@@ -555,6 +567,7 @@ void mcDetectorConstruction::DefineMaterials()
     water_mat = water;
     BC501A_mat = BC501A;
     NaI_mat = NaI;
+    */
 
     // examples of vacuum
     /*
