@@ -39,8 +39,7 @@ mcDetectorConstruction::mcDetectorConstruction()
     // default parameter values of Sensor
     DefineMaterials();
 
-    //SetSensorMaterial("NaI");
-    SetSensorMaterial("Ar1atm");
+    SetSensorMaterial("NaI");
 
 
     // create commands for interactive definition of the calorimeter
@@ -165,30 +164,19 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4LogicalVolume* rep3_lv = new G4LogicalVolume(rep3, Ar1atm, "rep3_lv");
     G4VisAttributes* rep3_att = new G4VisAttributes(1, blue);  rep3_lv->SetVisAttributes(rep3_att);
     new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, test_l/Ndiv_x);
-
     */
+
     /////////////////////////////////////////  for chamber BG //////////////////////////////////////////
-
-    G4Material* SUS304 = new G4Material("SUS304", 8.03*g/cm3, 3);
-    SUS304->AddElement(elFe, 0.7); SUS304->AddElement(elNi, 0.1); SUS304->AddElement(elCr, 0.2);
-    G4Material* metalAl = new G4Material("metalAl", 2.700*g/cm3, 1);
-    metalAl->AddElement(elAl, 1);
-    G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
-    acrylic->AddElement(elH, 8); acrylic->AddElement(elC, 5); acrylic->AddElement(elO, 2);
-    G4Material* Polyeth = new G4Material("Polyeth",0.95*g/cm3,2);
-    Polyeth->AddElement(elH, 2); Polyeth->AddElement(elC,1);
-
-    G4Material* metalPb = new G4Material("metalPb", 11.2*g/cm3, 1);
-    metalPb->AddElement(elPb,1);
-
-    auto chamber_mat = acrylic;
-    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, pla 1cm
+    /*
+    G4Material* chamber_mat = G4Material::GetMaterial("Polyeth");
+    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, plastic 10mm
 
     G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
     G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
     //G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
     chamber_lv->SetUserLimits(user_limit);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
 
 
     G4Box* vac_box = new G4Box("vac_box", 0.5*chamber_t*mm, 0.5*chamber_t, 0.5*chamber_t);
@@ -197,10 +185,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), vac_lv, "vac_pv", chamber_lv, false, 0);
     vac_lv->SetUserLimits(user_limit);
 
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
-
-
-    ///////////////////////////////////////////// sandbox ///////////////////////////////////////////////
+    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
+    */
+    ////////////////////////////////////////// material test ////////////////////////////////////////////
     /*
     G4Material* Pb_mat = new G4Material("Pb", 11.2*g/cm3, 1);
     Pb_mat->AddElement(elPb,1);
@@ -209,16 +196,16 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4Material* Polyeth_B2O3 = new G4Material("Polyeth_B2O3", 1.04*g/cm3, 4);
     Polyeth_B2O3->AddElement(elH,0.59); Polyeth_B2O3->AddElement(elC,0.33);
     Polyeth_B2O3->AddElement(elB,0.03); Polyeth_B2O3->AddElement(elO,0.05);
-
+    */
+    G4Material* test_mat = G4Material::GetMaterial("Polyeth");
     G4double l_mat_test = 1000*mm;
 
-    G4Box* mat_test_box = new G4Box("mat_test", 0.5*l_mat_test*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
-    G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, Pb_mat, "mat_test_lv");
+    G4Box* mat_test_box = new G4Box("mat_test", 0.5*10*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
+    G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, test_mat, "mat_test_lv");
     G4VisAttributes* mat_test_att = new G4VisAttributes(1, blue);  mat_test_lv->SetVisAttributes(mat_test_att);
-    G4PVPlacement* mat_test_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),
-                                                   "mat_test_pv", mat_test_lv, world_pv, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"mat_test_pv", mat_test_lv, world_pv, false, 0);
     mat_test_lv->SetUserLimits(user_limit);
-    */
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*
@@ -325,8 +312,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //logicSensor->SetSensitiveDetector(aSensorSD);
     //test_lv->SetSensitiveDetector(aSensorSD);
     //rep3_lv->SetSensitiveDetector(aSensorSD);
-    //mat_test_lv->SetSensitiveDetector(aSensorSD);
-    vac_lv->SetSensitiveDetector(aSensorSD);
+    mat_test_lv->SetSensitiveDetector(aSensorSD);
+    //chamber_lv->SetSensitiveDetector(aSensorSD);
+    //vac_lv->SetSensitiveDetector(aSensorSD);
 
     /*
     // Set UserLimits
@@ -544,7 +532,7 @@ void mcDetectorConstruction::DefineMaterials()
     BC501A->AddElement(H, 482); BC501A->AddElement(C, 398);
 
     // assign materials
-    /*
+
     world_mat = concrete;
     lab_mat = Air;
     air_mat = Air;
@@ -567,7 +555,8 @@ void mcDetectorConstruction::DefineMaterials()
     water_mat = water;
     BC501A_mat = BC501A;
     NaI_mat = NaI;
-    */
+    Polyeth_mat = Polyeth;
+
 
     // examples of vacuum
     /*

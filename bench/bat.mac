@@ -1,3 +1,5 @@
+/tracking/verbose 1
+/event/verbose 1
 
 # change world parameter
 /usr/det/setField 0.0 tesla

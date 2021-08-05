@@ -800,6 +800,7 @@ void DMXPhysicsList::ConstructHad()
 	  theInelasticProcess->RegisterMe( theFTFModel0 );
 	  pmanager->AddDiscreteProcess( theInelasticProcess );	  
 	}
+
       else if (particleName == "deuteron") 
 	{
 	  // Elastic scattering
@@ -814,6 +815,7 @@ void DMXPhysicsList::ConstructHad()
 	  theInelasticProcess->RegisterMe( theFTFModel1 );
           theInelasticProcess->RegisterMe( theBERTModel0 );
 	  pmanager->AddDiscreteProcess( theInelasticProcess );
+
 	}
       else if (particleName == "triton") 
 	{

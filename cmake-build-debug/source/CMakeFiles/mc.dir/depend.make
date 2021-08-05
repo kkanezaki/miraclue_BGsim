@@ -3651,8 +3651,6 @@ source/CMakeFiles/mc.dir/src/mcAnalyzer.cc.o: /opt/geant4/10.6.3/include/Geant4/
 
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXDetectorConstruction.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXDetectorMaterial.ihh
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXTPCHit.hh
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXTPCSD.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcAnalyzer.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcDetectorConstruction.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcDetectorMessenger.hh

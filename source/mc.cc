@@ -56,6 +56,7 @@ int main(int argc, char** argv)
     }
     */
 
+
     // Choose the Random engine
     G4Random::setTheEngine(new CLHEP::RanecuEngine);
     
@@ -73,13 +74,13 @@ int main(int argc, char** argv)
     runManager->SetUserInitialization(detector);
     
     // Physics list
-    /*
-    G4VModularPhysicsList* physicsList = new LBE;
+
+    G4VModularPhysicsList* physicsList = new LBE();
     physicsList->SetVerboseLevel(1);
     runManager->SetUserInitialization(physicsList);
-    */
 
-    runManager->SetUserInitialization(new DMXPhysicsList());
+
+    //runManager->SetUserInitialization(new DMXPhysicsList());
 
     // Set user action classes
     G4VUserPrimaryGeneratorAction* gen_action = new mcPrimaryGeneratorAction(detector);
