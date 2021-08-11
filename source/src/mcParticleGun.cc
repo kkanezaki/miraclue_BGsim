@@ -95,7 +95,7 @@ monoEnergy(1.0*keV),pMessenger(0)
 
 mcParticleGun::mcParticleGun(G4String filename){
     verbosityLevel = 2;
-    Mode = "Default";
+    Mode = "nAIST565";
     SourcePosType = "Volume";
     Shape = "NULL";
     Halfx = 0.0;
@@ -236,7 +236,7 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
 
 void mcParticleGun::GeneratePrimaryVertex_nAIST565(G4Event *anEvent){
     //G4ThreeVector pos = GeneratePosition();
-    G4ThreeVector pos = G4ThreeVector(-1*m,0,0);
+    G4ThreeVector pos = G4ThreeVector(0*m,0,0);
     G4double time = GenerateTime();
     G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
 

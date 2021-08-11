@@ -4,7 +4,7 @@ bench/*.out
 bench/G4History.macro
 bench/*.root
 bench/*.dat
-bench/analysis
+bench/analysis*
 bench/currentEvent.rndm
 bench/currentRun.rndm
 vis/*

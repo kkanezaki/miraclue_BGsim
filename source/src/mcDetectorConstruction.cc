@@ -10,6 +10,7 @@
 #include "G4Material.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
+#include "G4Sphere.hh"
 #include "G4Orb.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -196,7 +197,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4Material* Polyeth_B2O3 = new G4Material("Polyeth_B2O3", 1.04*g/cm3, 4);
     Polyeth_B2O3->AddElement(elH,0.59); Polyeth_B2O3->AddElement(elC,0.33);
     Polyeth_B2O3->AddElement(elB,0.03); Polyeth_B2O3->AddElement(elO,0.05);
-    */
+
     G4Material* test_mat = G4Material::GetMaterial("Polyeth");
     G4double l_mat_test = 1000*mm;
 
@@ -205,7 +206,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4VisAttributes* mat_test_att = new G4VisAttributes(1, blue);  mat_test_lv->SetVisAttributes(mat_test_att);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"mat_test_pv", mat_test_lv, world_pv, false, 0);
     mat_test_lv->SetUserLimits(user_limit);
-
+    */
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /*
@@ -283,6 +284,23 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     new G4PVPlacement(0, G4ThreeVector(0.,-1.0*m,0.), floor_lv, "floor_pv", lab_lv, false, 0);
     floor_lv->SetUserLimits(user_limit);
     */
+    ////////////////////////////////////////// confirm beam ///////////////////////////////////////////
+
+    G4double naikei = 0.*mm;
+    G4double gaikei = 100*mm;
+    G4double startPhi = 0.*deg;
+    G4double endPhi = 360.*deg;
+    G4double startTheta = 10.*deg;
+    G4double endTheta = 90*deg;
+
+    //G4Material* SphereMaterial = G4Material::("vacuum");
+    G4Material* SphereMaterial = vac_mat;
+
+    G4Sphere* shield = new G4Sphere("shield", naikei, gaikei, startPhi, endPhi, startTheta, endTheta);
+    G4LogicalVolume* shield_lv = new G4LogicalVolume(shield, SphereMaterial, "shield_lv");
+    new G4PVPlacement(0, G4ThreeVector(0.*m,0.,0.), shield_lv, "shield_lv", world_lv, false, 0);
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     // Sensor
@@ -312,9 +330,10 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //logicSensor->SetSensitiveDetector(aSensorSD);
     //test_lv->SetSensitiveDetector(aSensorSD);
     //rep3_lv->SetSensitiveDetector(aSensorSD);
-    mat_test_lv->SetSensitiveDetector(aSensorSD);
+    //mat_test_lv->SetSensitiveDetector(aSensorSD);
     //chamber_lv->SetSensitiveDetector(aSensorSD);
     //vac_lv->SetSensitiveDetector(aSensorSD);
+    shield_lv->SetSensitiveDetector(aSensorSD);
 
     /*
     // Set UserLimits
@@ -517,7 +536,7 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* LN2 = new G4Material("LN2", 0.8*g/cm3, 1, kStateLiquid, 77.*kelvin, 1.0*atmosphere);
     LN2->AddElement(N, 1);
 
-    G4Material* concrete = new G4Material("Concrete", 2.3*g/cm3, 6);
+    G4Material* concrete = new G4Material("concrete", 2.3*g/cm3, 6);
     concrete->AddElement(Si, 0.227915); concrete->AddElement(O, 0.60541);   concrete->AddElement(H, 0.09972);
     concrete->AddElement(Ca, 0.04986);  concrete->AddElement(Al, 0.014245); concrete->AddElement(Fe, 0.00285);
 

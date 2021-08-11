@@ -97,7 +97,6 @@ void mcParticleGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
     }else if ( command == eneCmd){
         mcPG->monoEnergy = eneCmd->GetNewDoubleValue(newValue);
     }
-    
 }
 
 G4String mcParticleGunMessenger::GetCurrentValue(G4UIcommand* command)
