@@ -3650,8 +3650,6 @@ source/CMakeFiles/mc.dir/src/mcAnalyzer.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4Types.hh
  /opt/geant4/10.6.3/include/Geant4/tls.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
- ../source/include/DMXDetectorConstruction.hh
- ../source/include/DMXDetectorMaterial.ihh
  ../source/include/mcAnalyzer.hh
  ../source/include/mcDetectorConstruction.hh
  ../source/include/mcDetectorMessenger.hh
@@ -3809,8 +3807,6 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4Box.hh
  /opt/geant4/10.6.3/include/Geant4/G4Box.icc
  /opt/geant4/10.6.3/include/Geant4/G4CSGSolid.hh
- /opt/geant4/10.6.3/include/Geant4/G4Cache.hh
- /opt/geant4/10.6.3/include/Geant4/G4CacheDetails.hh
  /opt/geant4/10.6.3/include/Geant4/G4ClassificationOfNewTrack.hh
  /opt/geant4/10.6.3/include/Geant4/G4CollectionNameVector.hh
  /opt/geant4/10.6.3/include/Geant4/G4Color.hh
@@ -3935,6 +3931,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4SmartVoxelProxy.icc
  /opt/geant4/10.6.3/include/Geant4/G4SmartVoxelStat.hh
  /opt/geant4/10.6.3/include/Geant4/G4SolidStore.hh
+ /opt/geant4/10.6.3/include/Geant4/G4Sphere.hh
+ /opt/geant4/10.6.3/include/Geant4/G4Sphere.icc
  /opt/geant4/10.6.3/include/Geant4/G4StackManager.hh
  /opt/geant4/10.6.3/include/Geant4/G4StackedTrack.hh
  /opt/geant4/10.6.3/include/Geant4/G4Step.hh
@@ -3977,6 +3975,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4UIparameter.hh
  /opt/geant4/10.6.3/include/Geant4/G4UItokenNum.hh
  /opt/geant4/10.6.3/include/Geant4/G4UOrb.hh
+ /opt/geant4/10.6.3/include/Geant4/G4USphere.hh
  /opt/geant4/10.6.3/include/Geant4/G4UTubs.hh
  /opt/geant4/10.6.3/include/Geant4/G4UniformMagField.hh
  /opt/geant4/10.6.3/include/Geant4/G4UserLimits.hh

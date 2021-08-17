@@ -25,9 +25,11 @@ public:
     
 public:
     
-    void SetSensorMaterial (G4String);
+    void SetSensorMaterial(G4String);
     void SetMaxStep(G4double);
     void SetMagField(G4double);
+    void SetNeutronShieldRadius(G4double);
+    void SetNeutronShieldType(G4String);
     
     G4VPhysicalVolume* Construct();
     
@@ -56,23 +58,37 @@ private:
     
     G4double           WorldRadius;
     
-    G4Orb*             solidWorld;
+    //G4Orb*             solidWorld;
+    G4Box*             solidWorld;
     G4LogicalVolume*   logicWorld;
     G4VPhysicalVolume* physWorld;
+
+    G4LogicalVolume*   logicLab;
     
-    G4Tubs*            solidSensor;
+    //G4Tubs*            solidSensor;
+    G4Box*             solidSensor;
     G4LogicalVolume*   logicSensor;
     G4VPhysicalVolume* physSensor;
     
     G4UniformMagField* magField;      //pointer to the magnetic field
     G4double           fieldValue;
+
+    G4double             shieldRadius;
+    G4double             shieldThetaMax;
     
-    G4UserLimits*      pUserLimits;    //pointer to the UserLimits
-    G4double            maxStep;          // max step length
+    G4UserLimits*        pUserLimits;    //pointer to the UserLimits
+    G4double             maxStep;          // max step length
     mcDetectorMessenger* detectorMessenger;  //pointer to the Messenger
     
     void DefineMaterials();
     mcAnalyzer* analyzer;
+
+private:
+    G4LogicalVolume* logicMother;
+    void ConstructLaboratory();
+    void ConstructBeamShield(G4LogicalVolume*);
+    void ConstructChamber(G4LogicalVolume*);
+    //void ConstructTestMaterial();
 
 };
 

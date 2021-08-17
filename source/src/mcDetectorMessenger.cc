@@ -16,6 +16,9 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     usrDir->SetGuidance("UI commands of this example");
     detDir = new G4UIdirectory("/usr/det/");
     detDir->SetGuidance("UI commands for detector setup");
+    nShieldDir = new G4UIdirectory("/usr/nShield/");
+    nShieldDir->SetGuidance("UI commands for neutron shield");
+
     
     MaterialCmd = new G4UIcmdWithAString("/usr/det/setMaterial",this);
     MaterialCmd->SetGuidance("Select Material of the sensor");
@@ -35,7 +38,20 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     MaxStepCmd->SetRange("MaxStep>0.");
     MaxStepCmd->SetUnitCategory("Length");    
     MaxStepCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
-    
+
+    ShieldRadiusCmd = new G4UIcmdWithADoubleAndUnit("/usr/nShield/radius",this);
+    ShieldRadiusCmd->SetGuidance("neutron shield radius");
+    ShieldRadiusCmd->SetParameterName("neutron shield radius",false);
+    ShieldRadiusCmd->SetUnitCategory("Length");
+    //ShieldRadiusCmd->SetDefaultValue(30*cm);
+    ShieldRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    ShieldTypeCmd = new G4UIcmdWithAString("/usr/nShield/type",this);
+    ShieldTypeCmd->SetGuidance("UI command for the shape of a neutron shield");
+    //ShieldTypeCmd->SetCandidates("sphere hemisphere");
+    ShieldTypeCmd->SetParameterName("neutron shield type",false);
+    ShieldTypeCmd->SetDefaultValue("sphere");
+    ShieldTypeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 }
 
 
@@ -43,8 +59,12 @@ mcDetectorMessenger::~mcDetectorMessenger()
 {
     delete MaterialCmd;
     delete MagFieldCmd;
-    delete MaxStepCmd;  
+    delete MaxStepCmd;
+    delete ShieldRadiusCmd;
+    delete ShieldTypeCmd;
+
     delete usrDir;
+    delete nShieldDir;
     
 }
 
@@ -53,12 +73,14 @@ void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 { 
     if( command == MaterialCmd ){
         mcDetector->SetSensorMaterial(newValue);
-        
     } else if( command == MaxStepCmd ){
         mcDetector->SetMaxStep(MaxStepCmd->GetNewDoubleValue(newValue));
-        
     } else if( command == MagFieldCmd ){
         mcDetector->SetMagField(MagFieldCmd->GetNewDoubleValue(newValue));
+    } else if( command == ShieldRadiusCmd ){
+        mcDetector->SetNeutronShieldRadius(ShieldRadiusCmd->GetNewDoubleValue(newValue));
+    } else if( command == ShieldTypeCmd ){
+        mcDetector->SetNeutronShieldType(newValue);
     }
 }
 

@@ -59,6 +59,9 @@ public:
     G4double LogLogInterpolatorCalculate(G4double);
     G4double LogLogInterpolatorCalculateSp(G4double);
     G4double LogLogInterpolatorCalculateFission(G4double);
+
+public:
+    void SetMode(G4String);
     
 private:
     std::ifstream file_HEPEvt;

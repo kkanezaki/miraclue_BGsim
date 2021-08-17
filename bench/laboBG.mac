@@ -1,0 +1,31 @@
+/tracking/verbose 1
+/event/verbose 1
+
+# change world parameter
+/usr/det/setField 0.0 tesla
+/usr/det/setMaxStep  1.0 cm
+
+/usr/nShield/radius 10 cm
+/usr/nShield/type hemisphere
+
+/gun/usr/mode nAIST565
+/gun/usr/particle neutron
+#inactivate msc
+#/process/inactivate msc
+
+#/gun/position -100 0 0 cm
+#/gun/direction 1 0 0
+#/gun/particle neutron
+#/gun/energy 0.565 MeV
+
+#/process/em/fluo true
+#/process/em/auger true
+#/process/em/augerCascade true
+
+#/usr/det/setMaterial NaI
+/run/setCut 0.01 mm
+
+/run/initialize
+
+/run/beamOn 10000
+

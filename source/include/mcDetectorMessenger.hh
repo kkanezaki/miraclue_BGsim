@@ -23,12 +23,15 @@ public:
     G4String GetCurrentValue(G4UIcommand * command);
     
 private:
-    mcDetectorConstruction* mcDetector;
+    mcDetectorConstruction*    mcDetector;
     G4UIdirectory*             usrDir;
     G4UIdirectory*             detDir;
     G4UIcmdWithAString*        MaterialCmd;
     G4UIcmdWithADoubleAndUnit* MaxStepCmd;
     G4UIcmdWithADoubleAndUnit* MagFieldCmd;
+    G4UIdirectory*             nShieldDir;
+    G4UIcmdWithADoubleAndUnit* ShieldRadiusCmd;
+    G4UIcmdWithAString*        ShieldTypeCmd;
     
 };
 

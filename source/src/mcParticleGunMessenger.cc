@@ -50,7 +50,7 @@ mcPG(pg)
     modeCmd->SetGuidance("Sets source mode.");
     modeCmd->SetGuidance("Default, 0nbb, ...");
     modeCmd->SetParameterName("Mode",true,true);
-    modeCmd->SetDefaultValue("nAIST565");
+    modeCmd->SetDefaultValue("Default");
     modeCmd->SetCandidates("Default 0nbb File nAIST565 gAIST565_1.0.1 gAIST565_1.0.3");
 
     typeCmd = new G4UIcmdWithAString("/gun/usr/type",this);
@@ -96,6 +96,8 @@ void mcParticleGunMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         mcPG->particleFlag = parCmd->GetNewIntValue(newValue);
     }else if ( command == eneCmd){
         mcPG->monoEnergy = eneCmd->GetNewDoubleValue(newValue);
+    }else if ( command == modeCmd){
+        mcPG->SetMode(newValue);
     }
 }
 

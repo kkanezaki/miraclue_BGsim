@@ -87,6 +87,7 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
 
     for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
         found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) && (trackID == (*sensorCollection)[iHit]->GetTrackID() ) ;
+
         if (found) {
             // check time
             if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) {
@@ -97,7 +98,7 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
         }
     }
 
-    
+
     mcSensorHit* newHit = new mcSensorHit();
     G4double eIn = aStep->GetPreStepPoint()->GetKineticEnergy();
     newHit->Set(copyNO, aTrack, eLoss, eIn);

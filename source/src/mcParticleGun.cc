@@ -95,7 +95,7 @@ monoEnergy(1.0*keV),pMessenger(0)
 
 mcParticleGun::mcParticleGun(G4String filename){
     verbosityLevel = 2;
-    Mode = "nAIST565";
+    Mode = "Default";
     SourcePosType = "Volume";
     Shape = "NULL";
     Halfx = 0.0;
@@ -128,7 +128,8 @@ mcParticleGun::~mcParticleGun()
     delete pMessenger;
 }
 
-/////////////////////////////////miraclue////////////////////////////////////////
+// for ParticleGunMessenger
+void mcParticleGun::SetMode(G4String mode) { Mode=mode; };
 
 G4ThreeVector mcParticleGun::GeneratePointSource(){
     if(verbosityLevel >= 1 && SourcePosType != "Point") G4cout << "Error SourcePosType is not set to Point" << G4endl;
@@ -236,7 +237,7 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
 
 void mcParticleGun::GeneratePrimaryVertex_nAIST565(G4Event *anEvent){
     //G4ThreeVector pos = GeneratePosition();
-    G4ThreeVector pos = G4ThreeVector(0*m,0,0);
+    G4ThreeVector pos = G4ThreeVector(0*m,0,-1*m);
     G4double time = GenerateTime();
     G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
 

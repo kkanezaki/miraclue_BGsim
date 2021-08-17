@@ -3649,8 +3649,6 @@ source/CMakeFiles/mc.dir/src/mcAnalyzer.cc.o: /opt/geant4/10.6.3/include/Geant4/
 source/CMakeFiles/mc.dir/src/mcAnalyzer.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Types.hh
 source/CMakeFiles/mc.dir/src/mcAnalyzer.cc.o: /opt/geant4/10.6.3/include/Geant4/tls.hh
 
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXDetectorConstruction.hh
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/DMXDetectorMaterial.ihh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcAnalyzer.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcDetectorConstruction.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: ../source/include/mcDetectorMessenger.hh
@@ -3808,8 +3806,6 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Box.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Box.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4CSGSolid.hh
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Cache.hh
-source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4CacheDetails.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ClassificationOfNewTrack.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4CollectionNameVector.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Color.hh
@@ -3934,6 +3930,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SmartVoxelProxy.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SmartVoxelStat.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SolidStore.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Sphere.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Sphere.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4StackManager.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4StackedTrack.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Step.hh
@@ -3976,6 +3974,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UIparameter.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UItokenNum.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UOrb.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4USphere.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UTubs.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UniformMagField.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UserLimits.hh
