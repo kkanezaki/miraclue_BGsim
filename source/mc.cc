@@ -48,13 +48,12 @@ int main(int argc, char** argv)
         ui = new G4UIExecutive(argc, argv);
     }
 
-    G4String outputfile="out.root";
-    /*
-    if ( argc==1 && argv[1]=="bat.mac"){
-        G4cout << "output filename : ";
-        G4cin >> outputfile;
+    G4String outputfile = "out.root";
+
+    if ( argc == 3 ){
+        outputfile = argv[2];
     }
-    */
+
 
 
     // Choose the Random engine

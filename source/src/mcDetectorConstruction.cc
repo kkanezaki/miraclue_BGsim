@@ -93,9 +93,9 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4double test_l = 300*mm;
     */
 
-    ConstructLaboratory();
-    ConstructBeamShield(logicLab);
-    ConstructChamber(logicLab);
+    //ConstructLaboratory();
+    //ConstructBeamShield(logicLab);
+    //ConstructChamber(logicLab);
 
 
     //////////////////////////////// devided gas box (for Intrinsic BG) ////////////////////////////////
@@ -154,24 +154,18 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
     */
     ////////////////////////////////////////// material test ////////////////////////////////////////////
-    /*
-    G4Material* Pb_mat = new G4Material("Pb", 11.2*g/cm3, 1);
-    Pb_mat->AddElement(elPb,1);
-    G4Material* Polyeth = new G4Material("Polyeth",0.95*g/cm3,2);
-    Polyeth->AddElement(elH, 0.66); Polyeth->AddElement(elC,0.34);
-    G4Material* Polyeth_B2O3 = new G4Material("Polyeth_B2O3", 1.04*g/cm3, 4);
-    Polyeth_B2O3->AddElement(elH,0.59); Polyeth_B2O3->AddElement(elC,0.33);
-    Polyeth_B2O3->AddElement(elB,0.03); Polyeth_B2O3->AddElement(elO,0.05);
 
-    G4Material* test_mat = G4Material::GetMaterial("Polyeth");
-    G4double l_mat_test = 1000*mm;
+    G4Material* test_mat = G4Material::GetMaterial("polyethylene_bolone10");
+    G4double l_mat_test = 500*m;
+    G4Colour testColor (0,0,1,0.9);
 
-    G4Box* mat_test_box = new G4Box("mat_test", 0.5*10*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
+    G4Box* mat_test_box = new G4Box("mat_test", 0.5*l_mat_test*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
     G4LogicalVolume* mat_test_lv = new G4LogicalVolume(mat_test_box, test_mat, "mat_test_lv");
-    G4VisAttributes* mat_test_att = new G4VisAttributes(1, blue);  mat_test_lv->SetVisAttributes(mat_test_att);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"mat_test_pv", mat_test_lv, world_pv, false, 0);
-    mat_test_lv->SetUserLimits(user_limit);
-    */
+    G4VisAttributes* mat_test_att = new G4VisAttributes(1, testColor);  mat_test_lv->SetVisAttributes(mat_test_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"mat_test_pv", mat_test_lv, physWorld, false, 0);
+    mat_test_lv->SetUserLimits(pUserLimits);
+    logicSensor = mat_test_lv;
+
 
     // Sensor
     /*
@@ -188,7 +182,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     // Sensitive detectors
     //------------------------------------------------
 
-    /*
+
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
     if ( aSensorSD == 0){
@@ -352,6 +346,7 @@ void mcDetectorConstruction::DefineMaterials()
     //
     G4Element* H  = new G4Element("Hydrogen", "H",  1.,  1.00794   *g/mole);
     G4Element* He = new G4Element("Helium",   "He", 2.,  4.002602  *g/mole);
+    G4Element* Li = new G4Element("lithium", "Li", 3,    6.941     *g/mole);
     G4Element* B  = new G4Element("Bolone",   "B",  5.,  10.81     *g/mole);
     G4Element* C  = new G4Element("Carbon",   "C",  6.,  12.011    *g/mole);
     G4Element* N  = new G4Element("Nitrogen", "N",  7.,  14.00674  *g/mole);
@@ -405,9 +400,16 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* polyeth = new G4Material("polyethylene",0.95*g/cm3,2);
     polyeth->AddElement(H, 2); polyeth->AddElement(C,1);
 
+    G4Material* polyeth_boron10 = new G4Material("polyethylene_bolone10",0.95*g/cm3,4);
+    polyeth_boron10->AddElement(H, 0.129); polyeth_boron10->AddElement(C,0.771);
+    polyeth_boron10->AddElement(B,0.031); polyeth_boron10->AddElement(O, 0.069);
+
     G4Material* polyeth_boron20 = new G4Material("polyethylene_bolone20",0.95*g/cm3,4);
     polyeth_boron20->AddElement(H, 0.114); polyeth_boron20->AddElement(C,0.686);
     polyeth_boron20->AddElement(B,0.062); polyeth_boron20->AddElement(O, 0.138);
+
+    G4Material* LiF = new G4Material("LiF", 2.5*g/cm3, 2);
+    LiF->AddElement(Li, 1); LiF->AddElement(F, 1);
 
     G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
     acrylic->AddElement(H, 8); acrylic->AddElement(C, 5); acrylic->AddElement(O, 2);

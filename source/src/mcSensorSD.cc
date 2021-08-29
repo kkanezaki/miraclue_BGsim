@@ -73,7 +73,7 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     G4int trackID = aTrack->GetTrackID();
 
     // Igrone initial particle
-    //if (trackID == 1) return false;
+    if (trackID != 1) return false;
 
     G4int NbHits = sensorCollection->entries();
     G4bool found = false;
