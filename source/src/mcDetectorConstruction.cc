@@ -155,7 +155,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     */
     ////////////////////////////////////////// material test ////////////////////////////////////////////
 
-    G4Material* test_mat = G4Material::GetMaterial("polyethylene_bolone10");
+    G4Material* test_mat = G4Material::GetMaterial("LiF");
     G4double l_mat_test = 500*m;
     G4Colour testColor (0,0,1,0.9);
 
@@ -346,7 +346,7 @@ void mcDetectorConstruction::DefineMaterials()
     //
     G4Element* H  = new G4Element("Hydrogen", "H",  1.,  1.00794   *g/mole);
     G4Element* He = new G4Element("Helium",   "He", 2.,  4.002602  *g/mole);
-    G4Element* Li = new G4Element("lithium", "Li", 3,    6.941     *g/mole);
+    G4Element* Li = new G4Element("lithium",  "Li", 3.,  6.941     *g/mole);
     G4Element* B  = new G4Element("Bolone",   "B",  5.,  10.81     *g/mole);
     G4Element* C  = new G4Element("Carbon",   "C",  6.,  12.011    *g/mole);
     G4Element* N  = new G4Element("Nitrogen", "N",  7.,  14.00674  *g/mole);
@@ -397,19 +397,22 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* MPPC = new G4Material("MPPC", 1.0*g/cm3, 2);//??????
     MPPC->AddElement(Al,2); MPPC->AddElement(O,3);
 
-    G4Material* polyeth = new G4Material("polyethylene",0.95*g/cm3,2);
-    polyeth->AddElement(H, 2); polyeth->AddElement(C,1);
+    G4Material* polyethylene = new G4Material("polyethylene",0.95*g/cm3,2);
+    polyethylene->AddElement(H, 2); polyethylene->AddElement(C,1);
 
-    G4Material* polyeth_boron10 = new G4Material("polyethylene_bolone10",0.95*g/cm3,4);
-    polyeth_boron10->AddElement(H, 0.129); polyeth_boron10->AddElement(C,0.771);
-    polyeth_boron10->AddElement(B,0.031); polyeth_boron10->AddElement(O, 0.069);
+    G4Material* polyethylene_boron10 = new G4Material("polyethylene_bolone10",0.98*g/cm3,4);
+    polyethylene_boron10->AddElement(H, 0.129); polyethylene_boron10->AddElement(C,0.771);
+    polyethylene_boron10->AddElement(B,0.031); polyethylene_boron10->AddElement(O, 0.069);
 
-    G4Material* polyeth_boron20 = new G4Material("polyethylene_bolone20",0.95*g/cm3,4);
-    polyeth_boron20->AddElement(H, 0.114); polyeth_boron20->AddElement(C,0.686);
-    polyeth_boron20->AddElement(B,0.062); polyeth_boron20->AddElement(O, 0.138);
+    G4Material* polyethylene_boron20 = new G4Material("polyethylene_bolone20",1.04*g/cm3,4);
+    polyethylene_boron20->AddElement(H, 0.114); polyethylene_boron20->AddElement(C,0.686);
+    polyethylene_boron20->AddElement(B,0.062); polyethylene_boron20->AddElement(O, 0.138);
 
     G4Material* LiF = new G4Material("LiF", 2.5*g/cm3, 2);
     LiF->AddElement(Li, 1); LiF->AddElement(F, 1);
+
+    G4Material* polyethylene_LiF10 = new G4Material("polyethylene_LiF10", 1.01*g/cm3, 2);
+    polyethylene_LiF10->AddMaterial(polyethylene, 0.9); polyethylene_LiF10->AddMaterial(LiF, 0.1);
 
     G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
     acrylic->AddElement(H, 8); acrylic->AddElement(C, 5); acrylic->AddElement(O, 2);
