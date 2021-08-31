@@ -156,7 +156,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     ////////////////////////////////////////// material test ////////////////////////////////////////////
 
     G4Material* test_mat = G4Material::GetMaterial("LiF");
-    G4double l_mat_test = 500*m;
+    G4double l_mat_test = 100*m;
     G4Colour testColor (0,0,1,0.9);
 
     G4Box* mat_test_box = new G4Box("mat_test", 0.5*l_mat_test*mm, 0.5*l_mat_test*mm, 0.5*l_mat_test*mm);
@@ -413,6 +413,9 @@ void mcDetectorConstruction::DefineMaterials()
 
     G4Material* polyethylene_LiF10 = new G4Material("polyethylene_LiF10", 1.01*g/cm3, 2);
     polyethylene_LiF10->AddMaterial(polyethylene, 0.9); polyethylene_LiF10->AddMaterial(LiF, 0.1);
+
+    G4Material* polyethylene_LiF50 = new G4Material("polyethylene_LiF50", 1.38*g/cm3, 2);
+    polyethylene_LiF50->AddMaterial(polyethylene, 0.5); polyethylene_LiF50->AddMaterial(LiF, 0.5);
 
     G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
     acrylic->AddElement(H, 8); acrylic->AddElement(C, 5); acrylic->AddElement(O, 2);
