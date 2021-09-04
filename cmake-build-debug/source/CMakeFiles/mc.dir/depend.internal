@@ -3803,6 +3803,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4AuxiliaryNavServices.icc
  /opt/geant4/10.6.3/include/Geant4/G4BlockingList.hh
  /opt/geant4/10.6.3/include/Geant4/G4BlockingList.icc
+ /opt/geant4/10.6.3/include/Geant4/G4BooleanSolid.hh
+ /opt/geant4/10.6.3/include/Geant4/G4BooleanSolid.icc
  /opt/geant4/10.6.3/include/Geant4/G4BoundingEnvelope.hh
  /opt/geant4/10.6.3/include/Geant4/G4Box.hh
  /opt/geant4/10.6.3/include/Geant4/G4Box.icc
@@ -3814,6 +3816,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4DCofThisEvent.hh
  /opt/geant4/10.6.3/include/Geant4/G4DataVector.hh
  /opt/geant4/10.6.3/include/Geant4/G4DataVector.icc
+ /opt/geant4/10.6.3/include/Geant4/G4DisplacedSolid.hh
  /opt/geant4/10.6.3/include/Geant4/G4DynamicParticle.hh
  /opt/geant4/10.6.3/include/Geant4/G4DynamicParticle.icc
  /opt/geant4/10.6.3/include/Geant4/G4ElectronOccupancy.hh
@@ -3944,6 +3947,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4SteppingManager.hh
  /opt/geant4/10.6.3/include/Geant4/G4String.hh
  /opt/geant4/10.6.3/include/Geant4/G4String.icc
+ /opt/geant4/10.6.3/include/Geant4/G4SubtractionSolid.hh
  /opt/geant4/10.6.3/include/Geant4/G4SystemOfUnits.hh
  /opt/geant4/10.6.3/include/Geant4/G4THitsCollection.hh
  /opt/geant4/10.6.3/include/Geant4/G4Threading.hh
@@ -3964,6 +3968,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4Transform3D.hh
  /opt/geant4/10.6.3/include/Geant4/G4TransportationManager.hh
  /opt/geant4/10.6.3/include/Geant4/G4TransportationManager.icc
+ /opt/geant4/10.6.3/include/Geant4/G4Trd.hh
+ /opt/geant4/10.6.3/include/Geant4/G4Trd.icc
  /opt/geant4/10.6.3/include/Geant4/G4Tubs.hh
  /opt/geant4/10.6.3/include/Geant4/G4Tubs.icc
  /opt/geant4/10.6.3/include/Geant4/G4Types.hh
@@ -3976,6 +3982,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4UItokenNum.hh
  /opt/geant4/10.6.3/include/Geant4/G4UOrb.hh
  /opt/geant4/10.6.3/include/Geant4/G4USphere.hh
+ /opt/geant4/10.6.3/include/Geant4/G4UTrd.hh
  /opt/geant4/10.6.3/include/Geant4/G4UTubs.hh
  /opt/geant4/10.6.3/include/Geant4/G4UniformMagField.hh
  /opt/geant4/10.6.3/include/Geant4/G4UserLimits.hh

@@ -37,6 +37,7 @@ private:
     G4UIcmdWithAString*        NeutronShieldTypeCmd;
     G4UIcmdWithAString*        NeutronShieldMaterialCmd;
     G4UIcmdWithABool *         GammaShield1Cmd;
+    G4UIcmdWithADoubleAndUnit* GammaShield1ThicknessCmd;
     G4UIcmdWithABool *         GammaShield2Cmd;
     
 };

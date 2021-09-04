@@ -3802,6 +3802,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4AuxiliaryNavServices.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4BlockingList.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4BlockingList.icc
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4BooleanSolid.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4BooleanSolid.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4BoundingEnvelope.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Box.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Box.icc
@@ -3813,6 +3815,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DCofThisEvent.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DataVector.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DataVector.icc
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DisplacedSolid.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DynamicParticle.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4DynamicParticle.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4ElectronOccupancy.hh
@@ -3943,6 +3946,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SteppingManager.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4String.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4String.icc
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SubtractionSolid.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4SystemOfUnits.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4THitsCollection.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Threading.hh
@@ -3963,6 +3967,8 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Transform3D.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4TransportationManager.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4TransportationManager.icc
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Trd.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Trd.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Tubs.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Tubs.icc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4Types.hh
@@ -3975,6 +3981,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/inc
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UItokenNum.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UOrb.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4USphere.hh
+source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UTrd.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UTubs.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UniformMagField.hh
 source/CMakeFiles/mc.dir/src/mcDetectorConstruction.cc.o: /opt/geant4/10.6.3/include/Geant4/G4UserLimits.hh

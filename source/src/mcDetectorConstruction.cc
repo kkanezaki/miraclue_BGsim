@@ -36,8 +36,9 @@ mcDetectorConstruction::mcDetectorConstruction()
          WorldRadius(100*cm),
          solidWorld(0),logicWorld(0),physWorld(0),
          solidSensor(0),logicSensor(0),physSensor(0),
-         magField(0),pUserLimits(0),maxStep(100.0*cm)
-         //nShieldSize(10.*cm), nShieldThetaMax(90.*deg)
+         magField(0),pUserLimits(0),maxStep(100.0*cm),
+         nShieldSize(0), nShieldThetaMax(0),
+         gShield1Thickness(0)
 {
 
     // default parameter values of Sensor
@@ -51,9 +52,18 @@ mcDetectorConstruction::mcDetectorConstruction()
 
     // create commands for interactive definition of the calorimeter
     detectorMessenger = new mcDetectorMessenger(this);
-    nShieldSize = 25.*cm;
-    nShieldThetaMax = 180.*deg;
-    nShieldShape = "none";
+    nShieldSize       = 25.*cm;
+    nShieldThetaMax   = 180.*deg;
+    nShieldShape      = "cube";
+    gShield1Thickness = 5*cm;
+
+    /*
+    l_gas             = 30*cm;  // length of gas box
+    t_fiducial        = 1*cm;   // thickness of fiducial cut area
+    d                 = 100*cm; // distance of beam point to centere of chamber
+    theta_cone        = atan( (l_gas/2. - t_fiducial )/ (d - (l_gas/2. - t_fiducial )) )*(180/M_PI)*deg;
+    l_cone            = nShieldSize*tan(theta_cone);
+    */
 
 }
 
@@ -96,8 +106,10 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4double test_l = 300*mm;
     */
 
+
     ConstructLaboratory();
     ConstructBeamShield();
+    //ConstructGammaShield1();
     //ConstructSphereBeamShield();
     //ConstructCubeBeamShield();
     ConstructChamber();
@@ -299,17 +311,32 @@ void mcDetectorConstruction::ConstructSphereBeamShield()
 
 void mcDetectorConstruction::ConstructCubeBeamShield()
 {
+
+    G4double l_gas_local             = 30*cm;  // length of gas box
+    G4double t_fiducial_local        = 1*cm;   // thickness of fiducial cut area
+    G4double d_local                 = 100*cm; // distance of beam point to centere of chamber
+    G4double theta_cone_local        = atan( (l_gas_local/2. - t_fiducial_local )/ (d_local - (l_gas_local/2. - t_fiducial_local )) )*(180/M_PI)*deg;
+    G4double l_cone_local            = nShieldSize*tan(theta_cone_local);
+    l_cone = l_cone_local;
+
     //G4Material* cube_mat = G4Material::GetMaterial("polyethylene_boron10");
     //G4Material* cone_mat = G4Material::GetMaterial("Air");
     G4Material* nshield_mat = G4Material::GetMaterial("polyethylene_boron10");
     G4Colour ShieldColor = (0.1, 0.1, 0.1, 1.0);
+    G4Material* gshield1_mat = G4Material::GetMaterial("metalPb");
+    G4Colour gShield1Color = G4Colour(0.8,0.8,0.8, 1.0);
 
-    G4double halfedge_nshield = nShieldSize;
-    G4double l_gas            = 30*cm;  // length of gas box
-    G4double t_fiducial       = 1*cm;   // thickness of fiducial cut area
-    G4double d                = 100*cm; // distance of beam point to centere of chamber
-    G4double theta_cone       = atan( (l_gas/2. - t_fiducial )/ (d - (l_gas/2. - t_fiducial )) )*(180/M_PI)*deg;
-    G4double l_cone           = nShieldSize*tan(theta_cone);
+    G4double halfedge_nshield    = nShieldSize;
+    G4double halfedge_squarehole = (nShieldSize+gShield1Thickness)*tan(theta_cone_local);
+
+    //gShield1Thickness = 5*cm;
+    G4Box* part1 = new G4Box("part1", nShieldSize, nShieldSize, gShield1Thickness/2.);
+    G4Box* part2 = new G4Box("part2", halfedge_squarehole, halfedge_squarehole, gShield1Thickness/2.);
+    G4VSolid* gshield1 = new G4SubtractionSolid("gshield1", part1, part2, 0, G4ThreeVector(0.,0.,0.));
+    G4LogicalVolume* gshield1_lv = new G4LogicalVolume(gshield1, gshield1_mat, "gshield1_lv");
+    G4VisAttributes* gshield1_att = new G4VisAttributes(1, gShield1Color);  gshield1_lv->SetVisAttributes(gshield1_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-100*cm+nShieldSize+gShield1Thickness/2.), gshield1_lv, "cone_pv", logicLab, false, 0);
+    gshield1_lv->SetUserLimits(pUserLimits);
 
     G4Box* cube = new G4Box("cube", halfedge_nshield, halfedge_nshield, halfedge_nshield);
     /*
@@ -337,7 +364,28 @@ void mcDetectorConstruction::ConstructCubeBeamShield()
 
 void mcDetectorConstruction::ConstructGammaShield1()
 {
-    G4Material* shield_mat = G4Material::GetMaterial("metal_Pb");
+
+    G4Material* gshield1_mat = G4Material::GetMaterial("metalPb");
+    G4Colour gShield1Color = G4Colour(0.8,0.8,0.8, 1.0);
+    /*
+    G4double l_gas             = 30*cm;  // length of gas box
+    G4double t_fiducial        = 1*cm;   // thickness of fiducial cut area
+    G4double d                 = 100*cm; // distance of beam point to centere of chamber
+    G4double theta_cone        = atan( (l_gas/2. - t_fiducial )/ (d - (l_gas/2. - t_fiducial )) )*(180/M_PI)*deg;
+    G4double l_cone            = nShieldSize*tan(theta_cone);
+    */
+    gShield1Thickness          = 5*cm;
+
+
+    G4Box* part1 = new G4Box("part1", nShieldSize, nShieldSize, gShield1Thickness);
+    G4Box* part2 = new G4Box("part2", l_cone, l_cone, gShield1Thickness);
+
+    G4VSolid* gshield1 = new G4SubtractionSolid("gshield1", part1, part2, 0, G4ThreeVector(0.,0.,0.));
+    G4LogicalVolume* gshield1_lv = new G4LogicalVolume(gshield1, gshield1_mat, "gshield1_lv");
+    G4VisAttributes* gshield1_att = new G4VisAttributes(1, gShield1Color);  gshield1_lv->SetVisAttributes(gshield1_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-100*cm+nShieldSize+gShield1Thickness/2.), gshield1_lv, "cone_pv", logicLab, false, 0);
+    gshield1_lv->SetUserLimits(pUserLimits);
+
 }
 
 void mcDetectorConstruction::ConstructChamber()
@@ -662,6 +710,12 @@ void mcDetectorConstruction::SetNeutronShieldType(G4String nShieldType)
     }else{
         G4cout << "unknown shield type: " << nShieldType << G4endl;
     }
+}
+
+void mcDetectorConstruction::SetGammaShield1Thickness(G4double value)
+{
+    gShield1Thickness = value;
+    UpdateGeometry();
 }
 
 #include "G4RunManager.hh"

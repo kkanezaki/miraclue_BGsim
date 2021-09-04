@@ -6,8 +6,8 @@
 #include "globals.hh"
 
 class G4Box;
-class G4Orb;
-class G4Tubs;
+//class G4Orb;
+//class G4Tubs;
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
@@ -30,6 +30,7 @@ public:
     void SetMagField(G4double);
     void SetNeutronShieldSize(G4double);
     void SetNeutronShieldType(G4String);
+    void SetGammaShield1Thickness(G4double);
     
     G4VPhysicalVolume* Construct();
     
@@ -75,12 +76,21 @@ private:
     G4UniformMagField* magField;      //pointer to the magnetic field
     G4double           fieldValue;
 
-    G4double             nShieldSize;
-    G4double             nShieldThetaMax;
-    G4String             nShieldShape;
+    G4double           nShieldSize;
+    G4double           nShieldThetaMax;
+    G4String           nShieldShape;
+
+    G4double           l_gas;
+    G4double           t_fiducial;
+    G4double           d;
+    G4double           theta_cone;
+    G4double           l_cone;
+
+
+    G4double           gShield1Thickness;
     
-    G4UserLimits*        pUserLimits;    //pointer to the UserLimits
-    G4double             maxStep;          // max step length
+    G4UserLimits*      pUserLimits;    //pointer to the UserLimits
+    G4double           maxStep;          // max step length
     mcDetectorMessenger* detectorMessenger;  //pointer to the Messenger
     
     void DefineMaterials();

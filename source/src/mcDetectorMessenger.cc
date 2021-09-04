@@ -70,6 +70,12 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     GammaShield1Cmd->SetDefaultValue(false);
     GammaShield1Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    GammaShield1ThicknessCmd = new G4UIcmdWithADoubleAndUnit("/usr/gShield1/thickness",this);
+    GammaShield1ThicknessCmd->SetGuidance("UI command for the thickness of gamma shield 1");
+    GammaShield1ThicknessCmd->SetParameterName("thickness of gamma shield 1",false);
+    GammaShield1ThicknessCmd->SetUnitCategory("Length");
+    GammaShield1ThicknessCmd->SetDefaultValue(5*cm);
+    GammaShield1ThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
 }
 
@@ -83,6 +89,7 @@ mcDetectorMessenger::~mcDetectorMessenger()
     delete NeutronShieldTypeCmd;
     delete NeutronShieldMaterialCmd;
     delete GammaShield1Cmd;
+    delete GammaShield1ThicknessCmd;
 
     delete usrDir;
     delete nShieldDir;
@@ -106,6 +113,8 @@ void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         mcDetector->SetNeutronShieldType(newValue);
     } else if( command == GammaShield1Cmd){
         //mcDetector->;
+    } else if( command == GammaShield1ThicknessCmd ){
+        mcDetector->SetGammaShield1Thickness(GammaShield1ThicknessCmd->GetNewDoubleValue(newValue));
     }
 }
 
