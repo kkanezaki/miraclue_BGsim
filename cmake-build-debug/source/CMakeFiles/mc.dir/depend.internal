@@ -4144,6 +4144,7 @@ source/CMakeFiles/mc.dir/src/mcDetectorMessenger.cc.o
  /opt/geant4/10.6.3/include/Geant4/G4Threading.hh
  /opt/geant4/10.6.3/include/Geant4/G4ThreeVector.hh
  /opt/geant4/10.6.3/include/Geant4/G4Types.hh
+ /opt/geant4/10.6.3/include/Geant4/G4UIcmdWithABool.hh
  /opt/geant4/10.6.3/include/Geant4/G4UIcmdWithADoubleAndUnit.hh
  /opt/geant4/10.6.3/include/Geant4/G4UIcmdWithAString.hh
  /opt/geant4/10.6.3/include/Geant4/G4UIcmdWithAnInteger.hh

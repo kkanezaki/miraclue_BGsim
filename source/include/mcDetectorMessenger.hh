@@ -10,6 +10,7 @@ class G4UIdirectory;
 class G4UIcmdWithAString;
 class G4UIcmdWithAnInteger;
 class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithABool;
 class G4UIcmdWithoutParameter;
 
 
@@ -26,12 +27,17 @@ private:
     mcDetectorConstruction*    mcDetector;
     G4UIdirectory*             usrDir;
     G4UIdirectory*             detDir;
+    G4UIdirectory*             nShieldDir;
+    G4UIdirectory*             gShield1Dir;
+    G4UIdirectory*             gShield2Dir;
     G4UIcmdWithAString*        MaterialCmd;
     G4UIcmdWithADoubleAndUnit* MaxStepCmd;
     G4UIcmdWithADoubleAndUnit* MagFieldCmd;
-    G4UIdirectory*             nShieldDir;
-    G4UIcmdWithADoubleAndUnit* ShieldRadiusCmd;
-    G4UIcmdWithAString*        ShieldTypeCmd;
+    G4UIcmdWithADoubleAndUnit* NeutronShieldSizeCmd;
+    G4UIcmdWithAString*        NeutronShieldTypeCmd;
+    G4UIcmdWithAString*        NeutronShieldMaterialCmd;
+    G4UIcmdWithABool *         GammaShield1Cmd;
+    G4UIcmdWithABool *         GammaShield2Cmd;
     
 };
 

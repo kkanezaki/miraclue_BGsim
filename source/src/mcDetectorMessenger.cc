@@ -6,6 +6,7 @@
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithABool.hh"
 #include "G4UIcmdWithoutParameter.hh"
 
 
@@ -17,9 +18,12 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     detDir = new G4UIdirectory("/usr/det/");
     detDir->SetGuidance("UI commands for detector setup");
     nShieldDir = new G4UIdirectory("/usr/nShield/");
-    nShieldDir->SetGuidance("UI commands for neutron shield");
+    nShieldDir->SetGuidance("UI commands for gamma shield");
+    gShield1Dir = new G4UIdirectory("/usr/gShield1/");
+    gShield1Dir->SetGuidance("UI commands for gamma ray shield on the neutron shield");
+    gShield2Dir = new G4UIdirectory("/usr/gShield2/");
+    gShield2Dir->SetGuidance("UI commands for gamma ray shield on the chamber");
 
-    
     MaterialCmd = new G4UIcmdWithAString("/usr/det/setMaterial",this);
     MaterialCmd->SetGuidance("Select Material of the sensor");
     MaterialCmd->SetParameterName("choice",false);
@@ -39,19 +43,34 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     MaxStepCmd->SetUnitCategory("Length");    
     MaxStepCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    ShieldRadiusCmd = new G4UIcmdWithADoubleAndUnit("/usr/nShield/radius",this);
-    ShieldRadiusCmd->SetGuidance("neutron shield radius");
-    ShieldRadiusCmd->SetParameterName("neutron shield radius",false);
-    ShieldRadiusCmd->SetUnitCategory("Length");
-    //ShieldRadiusCmd->SetDefaultValue(30*cm);
-    ShieldRadiusCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    NeutronShieldSizeCmd = new G4UIcmdWithADoubleAndUnit("/usr/nShield/size",this);
+    NeutronShieldSizeCmd->SetGuidance("neutron shield size");
+    NeutronShieldSizeCmd->SetParameterName("neutron shield size",false);
+    NeutronShieldSizeCmd->SetUnitCategory("Length");
+    NeutronShieldSizeCmd->SetDefaultValue(25*cm);
+    NeutronShieldSizeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
-    ShieldTypeCmd = new G4UIcmdWithAString("/usr/nShield/type",this);
-    ShieldTypeCmd->SetGuidance("UI command for the shape of a neutron shield");
-    //ShieldTypeCmd->SetCandidates("sphere hemisphere");
-    ShieldTypeCmd->SetParameterName("neutron shield type",false);
-    ShieldTypeCmd->SetDefaultValue("sphere");
-    ShieldTypeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+    NeutronShieldTypeCmd = new G4UIcmdWithAString("/usr/nShield/type",this);
+    NeutronShieldTypeCmd->SetGuidance("UI command for the shape of a neutron shield");
+    NeutronShieldTypeCmd->SetCandidates("sphere hemisphere cube none");
+    NeutronShieldTypeCmd->SetParameterName("neutron shield type",false);
+    NeutronShieldTypeCmd->SetDefaultValue("none");
+    NeutronShieldTypeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    NeutronShieldMaterialCmd = new G4UIcmdWithAString("/usr/nShield/setMaterial",this);
+    NeutronShieldMaterialCmd->SetGuidance("UI command for the material of a neutron shield");
+    NeutronShieldMaterialCmd->SetCandidates("polyethylene_boron10");
+    NeutronShieldMaterialCmd->SetParameterName("neutron shield type",false);
+    NeutronShieldMaterialCmd->SetDefaultValue("polyethylene_boron10");
+    NeutronShieldMaterialCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+    GammaShield1Cmd = new G4UIcmdWithABool("/usr/gShield1/putShield",this);
+    GammaShield1Cmd->SetGuidance("UI command for putting gShield1 ");
+    GammaShield1Cmd->SetParameterName("gamma shield type",false);
+    GammaShield1Cmd->SetDefaultValue(false);
+    GammaShield1Cmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
+
 }
 
 
@@ -60,11 +79,15 @@ mcDetectorMessenger::~mcDetectorMessenger()
     delete MaterialCmd;
     delete MagFieldCmd;
     delete MaxStepCmd;
-    delete ShieldRadiusCmd;
-    delete ShieldTypeCmd;
+    delete NeutronShieldSizeCmd;
+    delete NeutronShieldTypeCmd;
+    delete NeutronShieldMaterialCmd;
+    delete GammaShield1Cmd;
 
     delete usrDir;
     delete nShieldDir;
+    delete gShield1Dir;
+    delete gShield2Dir;
     
 }
 
@@ -77,10 +100,12 @@ void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
         mcDetector->SetMaxStep(MaxStepCmd->GetNewDoubleValue(newValue));
     } else if( command == MagFieldCmd ){
         mcDetector->SetMagField(MagFieldCmd->GetNewDoubleValue(newValue));
-    } else if( command == ShieldRadiusCmd ){
-        mcDetector->SetNeutronShieldRadius(ShieldRadiusCmd->GetNewDoubleValue(newValue));
-    } else if( command == ShieldTypeCmd ){
+    } else if( command == NeutronShieldSizeCmd ){
+        mcDetector->SetNeutronShieldSize(NeutronShieldSizeCmd->GetNewDoubleValue(newValue));
+    } else if( command == NeutronShieldTypeCmd ){
         mcDetector->SetNeutronShieldType(newValue);
+    } else if( command == GammaShield1Cmd){
+        //mcDetector->;
     }
 }
 

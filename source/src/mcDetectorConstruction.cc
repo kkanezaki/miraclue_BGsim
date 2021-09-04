@@ -12,6 +12,8 @@
 #include "G4Tubs.hh"
 #include "G4Sphere.hh"
 #include "G4Orb.hh"
+#include "G4Trd.hh"
+#include "G4SubtractionSolid.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
@@ -34,8 +36,8 @@ mcDetectorConstruction::mcDetectorConstruction()
          WorldRadius(100*cm),
          solidWorld(0),logicWorld(0),physWorld(0),
          solidSensor(0),logicSensor(0),physSensor(0),
-         magField(0),pUserLimits(0),maxStep(100.0*cm),
-         shieldRadius(10.*cm), shieldThetaMax(90.*deg)
+         magField(0),pUserLimits(0),maxStep(100.0*cm)
+         //nShieldSize(10.*cm), nShieldThetaMax(90.*deg)
 {
 
     // default parameter values of Sensor
@@ -49,8 +51,9 @@ mcDetectorConstruction::mcDetectorConstruction()
 
     // create commands for interactive definition of the calorimeter
     detectorMessenger = new mcDetectorMessenger(this);
-    shieldRadius = 30.*cm;
-    shieldThetaMax = 180.*deg;
+    nShieldSize = 25.*cm;
+    nShieldThetaMax = 180.*deg;
+    nShieldShape = "none";
 
 }
 
@@ -93,9 +96,11 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     G4double test_l = 300*mm;
     */
 
-    //ConstructLaboratory();
-    //ConstructBeamShield(logicLab);
-    //ConstructChamber(logicLab);
+    ConstructLaboratory();
+    ConstructBeamShield();
+    //ConstructSphereBeamShield();
+    //ConstructCubeBeamShield();
+    ConstructChamber();
 
 
     //////////////////////////////// devided gas box (for Intrinsic BG) ////////////////////////////////
@@ -154,7 +159,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
     */
     ////////////////////////////////////////// material test ////////////////////////////////////////////
-
+    /*
     G4Material* test_mat = G4Material::GetMaterial("LiF");
     G4double l_mat_test = 100*m;
     G4Colour testColor (0,0,1,0.9);
@@ -165,6 +170,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.),"mat_test_pv", mat_test_lv, physWorld, false, 0);
     mat_test_lv->SetUserLimits(pUserLimits);
     logicSensor = mat_test_lv;
+    */
 
 
     // Sensor
@@ -182,7 +188,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     // Sensitive detectors
     //------------------------------------------------
 
-
+    /*
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
     if ( aSensorSD == 0){
@@ -191,6 +197,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     }
     aSensorSD->SetAnalyzer(analyzer);
     logicSensor->SetSensitiveDetector(aSensorSD);
+    */
 
     //test_lv->SetSensitiveDetector(aSensorSD);
 
@@ -222,8 +229,8 @@ void mcDetectorConstruction::ConstructLaboratory()
     G4double concrete_w = lab_w  + concrete_t, concrete_h = lab_h + concrete_t;
 
     // colors
-    G4Colour ConcreteColor (0.5, 0.5, 0.5, 0.7);
-    G4Colour AirColor      (0.5, 0.5, 0.5, 0.4);
+    G4Colour ConcreteColor (0.5, 0.5, 0.5, 1.0);
+    G4Colour AirColor      (0.5, 0.5, 0.5, 1.0);
     G4Colour AlColor       (0.7, 0.7, 0.7, 1.0);
 
     // materials
@@ -257,27 +264,83 @@ void mcDetectorConstruction::ConstructLaboratory()
     floor_lv->SetUserLimits(pUserLimits);
 }
 
-void mcDetectorConstruction::ConstructBeamShield(G4LogicalVolume* logicMom)
+void mcDetectorConstruction::ConstructBeamShield()
+{
+    if( (nShieldShape=="sphere") || (nShieldShape=="hemisphere") ){
+        ConstructSphereBeamShield();
+    } else if (nShieldShape=="cube"){
+        ConstructCubeBeamShield();
+    } else if (nShieldShape=="none"){
+        // no shield
+    } else {
+        G4cout << "unkown nshield shape " << nShieldShape << G4endl;
+    }
+}
+
+void mcDetectorConstruction::ConstructSphereBeamShield()
 {
     G4double naikei = 0.*mm;
-    G4double gaikei = shieldRadius;
+    G4double gaikei = nShieldSize;
     G4double startPhi = 0.*deg;
     G4double endPhi = 360.*deg;
     G4double startTheta = 10.*deg;
-    G4double endTheta = shieldThetaMax;
+    G4double endTheta = nShieldThetaMax;
 
     G4RotationMatrix* rm_shield = new G4RotationMatrix();
     rm_shield->rotateY(180.*deg);
 
-    G4Material* shield_mat = G4Material::GetMaterial("polyethylene_bolone20");
+    G4Material* shield_mat = G4Material::GetMaterial("polyethylene_boron10");
 
     G4Sphere* shield = new G4Sphere("shield", naikei, gaikei, startPhi, endPhi, startTheta, endTheta);
     G4LogicalVolume* shield_lv = new G4LogicalVolume(shield, shield_mat, "shield_lv");
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1.*m), shield_lv, "shield_lv", logicMom, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1.*m), shield_lv, "shield_lv", logicLab, false, 0);
 
 }
 
-void mcDetectorConstruction::ConstructChamber(G4LogicalVolume* logicMom)
+void mcDetectorConstruction::ConstructCubeBeamShield()
+{
+    //G4Material* cube_mat = G4Material::GetMaterial("polyethylene_boron10");
+    //G4Material* cone_mat = G4Material::GetMaterial("Air");
+    G4Material* nshield_mat = G4Material::GetMaterial("polyethylene_boron10");
+    G4Colour ShieldColor = (0.1, 0.1, 0.1, 1.0);
+
+    G4double halfedge_nshield = nShieldSize;
+    G4double l_gas            = 30*cm;  // length of gas box
+    G4double t_fiducial       = 1*cm;   // thickness of fiducial cut area
+    G4double d                = 100*cm; // distance of beam point to centere of chamber
+    G4double theta_cone       = atan( (l_gas/2. - t_fiducial )/ (d - (l_gas/2. - t_fiducial )) )*(180/M_PI)*deg;
+    G4double l_cone           = nShieldSize*tan(theta_cone);
+
+    G4Box* cube = new G4Box("cube", halfedge_nshield, halfedge_nshield, halfedge_nshield);
+    /*
+    G4LogicalVolume* cube_lv = new G4LogicalVolume(cube, cube_mat, "cube_lv");
+    G4VisAttributes* cube_att = new G4VisAttributes(1, ShieldColor);  cube_lv->SetVisAttributes(cube_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), cube_lv,"cube_pv", logicLab, false, 0);
+    cube_lv->SetUserLimits(pUserLimits);
+    */
+
+    G4Trd* cone = new G4Trd("cone", 0., l_cone, 0, l_cone, nShieldSize/2.);
+    /*
+    G4LogicalVolume* cone_lv = new G4LogicalVolume(cone, cone_mat, "cone_lv");
+    G4VisAttributes* cone_att = new G4VisAttributes(1, ShieldColor);  cone_lv->SetVisAttributes(cone_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.*m,0), cone_lv,"cone_pv", logicLab, false, 0);
+    cone_lv->SetUserLimits(pUserLimits);
+    */
+
+    G4VSolid* nshield = new G4SubtractionSolid("nshield", cube, cone, 0, G4ThreeVector (0.,0.,nShieldSize/2.));
+    G4LogicalVolume* nshield_lv = new G4LogicalVolume(nshield, nshield_mat, "nshield_lv");
+    G4VisAttributes* nshield_att = new G4VisAttributes(1, ShieldColor);  nshield_lv->SetVisAttributes(nshield_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1*m), nshield_lv,"cone_pv", logicLab, false, 0);
+    nshield_lv->SetUserLimits(pUserLimits);
+
+}
+
+void mcDetectorConstruction::ConstructGammaShield1()
+{
+    G4Material* shield_mat = G4Material::GetMaterial("metal_Pb");
+}
+
+void mcDetectorConstruction::ConstructChamber()
 {
 
     G4int Ndiv_x = 30;
@@ -286,7 +349,7 @@ void mcDetectorConstruction::ConstructChamber(G4LogicalVolume* logicMom)
     //G4int Ncopy = Ndiv_x * Ndiv_y * Ndiv_z;
 
     G4double test_l = 30*cm;
-    G4Colour ArColor (0,0.9,0.1,0.9);
+    G4Colour ArColor (0,0.9,0.1,1.);
     G4Colour GasColor = ArColor;
     G4Material* gas_mat = G4Material::GetMaterial("vacuum");
 
@@ -294,7 +357,7 @@ void mcDetectorConstruction::ConstructChamber(G4LogicalVolume* logicMom)
     G4LogicalVolume* gas_lv = new G4LogicalVolume(gas_box, gas_mat, "gas_lv");
     G4VisAttributes* gas_att = new G4VisAttributes(1, GasColor);  gas_lv->SetVisAttributes(gas_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"test_pv", logicMom, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", logicLab, false, 0);
     gas_lv->SetUserLimits(pUserLimits);
 
     G4Box* rep1 = new G4Box("rep1", test_l*0.5, test_l*0.5, (test_l/Ndiv_z)*0.5);
@@ -400,11 +463,11 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* polyethylene = new G4Material("polyethylene",0.95*g/cm3,2);
     polyethylene->AddElement(H, 2); polyethylene->AddElement(C,1);
 
-    G4Material* polyethylene_boron10 = new G4Material("polyethylene_bolone10",0.98*g/cm3,4);
+    G4Material* polyethylene_boron10 = new G4Material("polyethylene_boron10",0.98*g/cm3,4);
     polyethylene_boron10->AddElement(H, 0.129); polyethylene_boron10->AddElement(C,0.771);
     polyethylene_boron10->AddElement(B,0.031); polyethylene_boron10->AddElement(O, 0.069);
 
-    G4Material* polyethylene_boron20 = new G4Material("polyethylene_bolone20",1.04*g/cm3,4);
+    G4Material* polyethylene_boron20 = new G4Material("polyethylene_boron20",1.04*g/cm3,4);
     polyethylene_boron20->AddElement(H, 0.114); polyethylene_boron20->AddElement(C,0.686);
     polyethylene_boron20->AddElement(B,0.062); polyethylene_boron20->AddElement(O, 0.138);
 
@@ -575,21 +638,29 @@ void mcDetectorConstruction::SetMagField(G4double value)
     }
 }
 
-void mcDetectorConstruction::SetNeutronShieldRadius(G4double value) {
-    shieldRadius = value;
+void mcDetectorConstruction::SetNeutronShieldSize(G4double value) {
+    nShieldSize = value;
     UpdateGeometry();
 }
 
-void mcDetectorConstruction::SetNeutronShieldType(G4String shieldType)
+void mcDetectorConstruction::SetNeutronShieldType(G4String nShieldType)
 {
-    if( shieldType ==  "sphere" ){
-        shieldThetaMax = 180.*deg;
+    if( nShieldType ==  "sphere" ){
+        nShieldThetaMax = 180.*deg;
+        nShieldShape = nShieldType;
         UpdateGeometry();
-    }else if( shieldType == "hemisphere"){
-        shieldThetaMax = 90.*deg;
+    }else if( nShieldType == "hemisphere" ) {
+        nShieldThetaMax = 90. * deg;
+        nShieldShape = nShieldType;
+        UpdateGeometry();
+    }else if( nShieldType == "cube" ) {
+        nShieldShape = nShieldType;
+        UpdateGeometry();
+    }else if( nShieldType == "none" ){
+        nShieldShape = nShieldType;
         UpdateGeometry();
     }else{
-        G4cout << "unknown shield type: " << shieldType << G4endl;
+        G4cout << "unknown shield type: " << nShieldType << G4endl;
     }
 }
 

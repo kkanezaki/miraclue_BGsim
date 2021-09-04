@@ -28,7 +28,7 @@ public:
     void SetSensorMaterial(G4String);
     void SetMaxStep(G4double);
     void SetMagField(G4double);
-    void SetNeutronShieldRadius(G4double);
+    void SetNeutronShieldSize(G4double);
     void SetNeutronShieldType(G4String);
     
     G4VPhysicalVolume* Construct();
@@ -40,6 +40,7 @@ public:
     G4double GetWorldRadius()  const    {return WorldRadius;};
     
     const G4Material* GetSensorMaterial()  const {return sensorMaterial;};
+    const G4Material* GetnShieldMaterial() const {return nShieldMaterial;};
     
     G4double    GetMaxStep()      const {return maxStep;};
     
@@ -55,6 +56,7 @@ public:
 private:
     G4Material*        defaultMaterial;
     G4Material*        sensorMaterial;
+    G4Material*        nShieldMaterial;
     
     G4double           WorldRadius;
     
@@ -73,8 +75,9 @@ private:
     G4UniformMagField* magField;      //pointer to the magnetic field
     G4double           fieldValue;
 
-    G4double             shieldRadius;
-    G4double             shieldThetaMax;
+    G4double             nShieldSize;
+    G4double             nShieldThetaMax;
+    G4String             nShieldShape;
     
     G4UserLimits*        pUserLimits;    //pointer to the UserLimits
     G4double             maxStep;          // max step length
@@ -86,8 +89,11 @@ private:
 private:
     G4LogicalVolume* logicMother;
     void ConstructLaboratory();
-    void ConstructBeamShield(G4LogicalVolume*);
-    void ConstructChamber(G4LogicalVolume*);
+    void ConstructBeamShield();
+    void ConstructSphereBeamShield();
+    void ConstructCubeBeamShield();
+    void ConstructChamber();
+    void ConstructGammaShield1();
     //void ConstructTestMaterial();
 
 };
