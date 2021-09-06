@@ -44,7 +44,8 @@ mcDetectorConstruction::mcDetectorConstruction()
     // default parameter values of Sensor
     DefineMaterials();
 
-    SetSensorMaterial("NaI");
+    SetSensorMaterial("Ar1atm");
+    SetNeutronShieldMaterial("polyethylene_boron10");
 
     // user limits   G4userLimits(step-length-max, track-length-max, time-cut, min-energy)
     double step_size = 0.1*mm;
@@ -52,10 +53,12 @@ mcDetectorConstruction::mcDetectorConstruction()
 
     // create commands for interactive definition of the calorimeter
     detectorMessenger = new mcDetectorMessenger(this);
+    l_gas             = 30.*cm;
     nShieldSize       = 25.*cm;
     nShieldThetaMax   = 180.*deg;
     nShieldShape      = "cube";
     gShield1Thickness = 5*cm;
+    gShield2Thickness = 5*cm;
 
     /*
     l_gas             = 30*cm;  // length of gas box
@@ -301,11 +304,12 @@ void mcDetectorConstruction::ConstructSphereBeamShield()
     G4RotationMatrix* rm_shield = new G4RotationMatrix();
     rm_shield->rotateY(180.*deg);
 
-    G4Material* shield_mat = G4Material::GetMaterial("polyethylene_boron10");
+    //G4Material* shield_mat = G4Material::GetMaterial("polyethylene_boron10");
+    G4Material* nshield_mat = nShieldMaterial;
 
-    G4Sphere* shield = new G4Sphere("shield", naikei, gaikei, startPhi, endPhi, startTheta, endTheta);
-    G4LogicalVolume* shield_lv = new G4LogicalVolume(shield, shield_mat, "shield_lv");
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1.*m), shield_lv, "shield_lv", logicLab, false, 0);
+    G4Sphere* nshield = new G4Sphere("shield", naikei, gaikei, startPhi, endPhi, startTheta, endTheta);
+    G4LogicalVolume* nshield_lv = new G4LogicalVolume(nshield, nshield_mat, "nshield_lv");
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1.*m), nshield_lv, "nshield_pv", logicLab, false, 0);
 
 }
 
@@ -321,22 +325,16 @@ void mcDetectorConstruction::ConstructCubeBeamShield()
 
     //G4Material* cube_mat = G4Material::GetMaterial("polyethylene_boron10");
     //G4Material* cone_mat = G4Material::GetMaterial("Air");
-    G4Material* nshield_mat = G4Material::GetMaterial("polyethylene_boron10");
+    //G4Material* nshield_mat = G4Material::GetMaterial("polyethylene_boron10");
+    G4Material* nshield_mat = nShieldMaterial;
     G4Colour ShieldColor = (0.1, 0.1, 0.1, 1.0);
     G4Material* gshield1_mat = G4Material::GetMaterial("metalPb");
     G4Colour gShield1Color = G4Colour(0.8,0.8,0.8, 1.0);
+    G4Material* gshield2_mat = G4Material::GetMaterial("metalPb");
+    G4Colour gShield2Color = G4Colour(0.3,0.3,0.3, 1.0);
 
     G4double halfedge_nshield    = nShieldSize;
     G4double halfedge_squarehole = (nShieldSize+gShield1Thickness)*tan(theta_cone_local);
-
-    //gShield1Thickness = 5*cm;
-    G4Box* part1 = new G4Box("part1", nShieldSize, nShieldSize, gShield1Thickness/2.);
-    G4Box* part2 = new G4Box("part2", halfedge_squarehole, halfedge_squarehole, gShield1Thickness/2.);
-    G4VSolid* gshield1 = new G4SubtractionSolid("gshield1", part1, part2, 0, G4ThreeVector(0.,0.,0.));
-    G4LogicalVolume* gshield1_lv = new G4LogicalVolume(gshield1, gshield1_mat, "gshield1_lv");
-    G4VisAttributes* gshield1_att = new G4VisAttributes(1, gShield1Color);  gshield1_lv->SetVisAttributes(gshield1_att);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,-100*cm+nShieldSize+gShield1Thickness/2.), gshield1_lv, "cone_pv", logicLab, false, 0);
-    gshield1_lv->SetUserLimits(pUserLimits);
 
     G4Box* cube = new G4Box("cube", halfedge_nshield, halfedge_nshield, halfedge_nshield);
     /*
@@ -357,9 +355,26 @@ void mcDetectorConstruction::ConstructCubeBeamShield()
     G4VSolid* nshield = new G4SubtractionSolid("nshield", cube, cone, 0, G4ThreeVector (0.,0.,nShieldSize/2.));
     G4LogicalVolume* nshield_lv = new G4LogicalVolume(nshield, nshield_mat, "nshield_lv");
     G4VisAttributes* nshield_att = new G4VisAttributes(1, ShieldColor);  nshield_lv->SetVisAttributes(nshield_att);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1*m), nshield_lv,"cone_pv", logicLab, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,-1*m), nshield_lv,"nshield_pv", logicLab, false, 0);
     nshield_lv->SetUserLimits(pUserLimits);
 
+    // gamma shield 1
+    if (gShield1Thickness != 0){
+        G4Box* part1 = new G4Box("part1", nShieldSize, nShieldSize, gShield1Thickness/2.);
+        G4Box* part2 = new G4Box("part2", halfedge_squarehole, halfedge_squarehole, gShield1Thickness/2.);
+        G4VSolid* gshield1 = new G4SubtractionSolid("gshield1", part1, part2, 0, G4ThreeVector(0.,0.,0.));
+        G4LogicalVolume* gshield1_lv = new G4LogicalVolume(gshield1, gshield1_mat, "gshield1_lv");
+        G4VisAttributes* gshield1_att = new G4VisAttributes(1, gShield1Color);  gshield1_lv->SetVisAttributes(gshield1_att);
+        new G4PVPlacement(0, G4ThreeVector(0.,0.,-100*cm+nShieldSize+gShield1Thickness/2.), gshield1_lv, "gshield1_pv", logicLab, false, 0);
+        gshield1_lv->SetUserLimits(pUserLimits);
+    }
+
+    // gamma shield 2
+    if (gShield2Thickness != 0) {
+        G4Box *gshield2 = new G4Box("gshield2", l_gas / 2., l_gas / 2., gShield2Thickness / 2.);
+        G4LogicalVolume *gshield2_lv = new G4LogicalVolume(gshield2, gshield2_mat, "gshield2_lv");
+        new G4PVPlacement(0, G4ThreeVector(0., 0., -0.5 * (l_gas + gShield2Thickness)), gshield2_lv, "gshield2_lv", logicLab, false, 0);
+    }
 }
 
 void mcDetectorConstruction::ConstructGammaShield1()
@@ -374,7 +389,7 @@ void mcDetectorConstruction::ConstructGammaShield1()
     G4double theta_cone        = atan( (l_gas/2. - t_fiducial )/ (d - (l_gas/2. - t_fiducial )) )*(180/M_PI)*deg;
     G4double l_cone            = nShieldSize*tan(theta_cone);
     */
-    gShield1Thickness          = 5*cm;
+    //gShield1Thickness          = 5*cm;
 
 
     G4Box* part1 = new G4Box("part1", nShieldSize, nShieldSize, gShield1Thickness);
@@ -396,32 +411,33 @@ void mcDetectorConstruction::ConstructChamber()
     G4int Ndiv_z = 30;
     //G4int Ncopy = Ndiv_x * Ndiv_y * Ndiv_z;
 
-    G4double test_l = 30*cm;
+    l_gas = 30*cm;
     G4Colour ArColor (0,0.9,0.1,1.);
     G4Colour GasColor = ArColor;
     G4Material* gas_mat = G4Material::GetMaterial("vacuum");
+    //G4Material* gas_mat = sensorMaterial;
 
-    G4Box* gas_box = new G4Box("gas", 0.5*test_l, 0.5*test_l, 0.5*test_l);
+    G4Box* gas_box = new G4Box("gas", 0.5*l_gas, 0.5*l_gas, 0.5*l_gas);
     G4LogicalVolume* gas_lv = new G4LogicalVolume(gas_box, gas_mat, "gas_lv");
     G4VisAttributes* gas_att = new G4VisAttributes(1, GasColor);  gas_lv->SetVisAttributes(gas_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", logicLab, false, 0);
     gas_lv->SetUserLimits(pUserLimits);
 
-    G4Box* rep1 = new G4Box("rep1", test_l*0.5, test_l*0.5, (test_l/Ndiv_z)*0.5);
+    G4Box* rep1 = new G4Box("rep1", l_gas*0.5, l_gas*0.5, (l_gas/Ndiv_z)*0.5);
     G4LogicalVolume* rep1_lv = new G4LogicalVolume(rep1, gas_mat, "rep1_lv");
     G4VisAttributes* rep1_att = new G4VisAttributes(1, GasColor);  rep1_lv->SetVisAttributes(rep1_att);
-    new G4PVReplica("rep1_pv", rep1_lv, gas_lv, kZAxis, Ndiv_z, test_l/Ndiv_z);
+    new G4PVReplica("rep1_pv", rep1_lv, gas_lv, kZAxis, Ndiv_z, l_gas/Ndiv_z);
 
-    G4Box* rep2 = new G4Box("rep2", test_l*0.5, (test_l/Ndiv_y)*0.5, (test_l/Ndiv_z)*0.5);
+    G4Box* rep2 = new G4Box("rep2", l_gas*0.5, (l_gas/Ndiv_y)*0.5, (l_gas/Ndiv_z)*0.5);
     G4LogicalVolume* rep2_lv = new G4LogicalVolume(rep2, gas_mat, "rep2_lv");
     G4VisAttributes* rep2_att = new G4VisAttributes(1, GasColor);  rep2_lv->SetVisAttributes(rep2_att);
-    new G4PVReplica("rep2_pv", rep2_lv, rep1_lv, kYAxis, Ndiv_y, test_l/Ndiv_y);
+    new G4PVReplica("rep2_pv", rep2_lv, rep1_lv, kYAxis, Ndiv_y, l_gas/Ndiv_y);
 
-    G4Box* rep3 = new G4Box("rep3", (test_l/Ndiv_x)*0.5, (test_l/Ndiv_y)*0.5, (test_l/Ndiv_z)*0.5);
+    G4Box* rep3 = new G4Box("rep3", (l_gas/Ndiv_x)*0.5, (l_gas/Ndiv_y)*0.5, (l_gas/Ndiv_z)*0.5);
     G4LogicalVolume* rep3_lv = new G4LogicalVolume(rep3, gas_mat, "rep3_lv");
     G4VisAttributes* rep3_att = new G4VisAttributes(1, GasColor);  rep3_lv->SetVisAttributes(rep3_att);
-    new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, test_l/Ndiv_x);
+    new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, l_gas/Ndiv_x);
 
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
@@ -663,6 +679,22 @@ void mcDetectorConstruction::SetSensorMaterial(G4String materialChoice)
     }
 }
 
+void mcDetectorConstruction::SetNeutronShieldMaterial(G4String materialChoice)
+{
+    // search the material by its name
+    G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
+    if (pttoMaterial) {
+        nShieldMaterial = pttoMaterial;
+        G4cout << " mcDetectorConstruction::SetNeutronShieldMaterial:  ";
+        G4cout << "Neutron Shield material is " << materialChoice << G4endl;
+        UpdateGeometry();
+    } else {
+        G4cout << " mcDetectorConstruction::SetNeutronShieldMaterial:  ";
+        G4cout << materialChoice << " is not in the Material Table.";
+        G4cout <<G4endl;
+    }
+}
+
 
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
@@ -684,6 +716,12 @@ void mcDetectorConstruction::SetMagField(G4double value)
         magField = 0;
         fieldMgr->SetDetectorField(magField);
     }
+}
+
+void mcDetectorConstruction::SetGasBoxSize(G4double value)
+{
+    l_gas = value;
+    UpdateGeometry();
 }
 
 void mcDetectorConstruction::SetNeutronShieldSize(G4double value) {
@@ -715,6 +753,12 @@ void mcDetectorConstruction::SetNeutronShieldType(G4String nShieldType)
 void mcDetectorConstruction::SetGammaShield1Thickness(G4double value)
 {
     gShield1Thickness = value;
+    UpdateGeometry();
+}
+
+void mcDetectorConstruction::SetGammaShield2Thickness(G4double value)
+{
+    gShield2Thickness = value;
     UpdateGeometry();
 }
 

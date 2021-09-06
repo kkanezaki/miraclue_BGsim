@@ -28,9 +28,12 @@ public:
     void SetSensorMaterial(G4String);
     void SetMaxStep(G4double);
     void SetMagField(G4double);
+    void SetGasBoxSize(G4double);
+    void SetNeutronShieldMaterial(G4String);
     void SetNeutronShieldSize(G4double);
     void SetNeutronShieldType(G4String);
     void SetGammaShield1Thickness(G4double);
+    void SetGammaShield2Thickness(G4double);
     
     G4VPhysicalVolume* Construct();
     
@@ -86,8 +89,8 @@ private:
     G4double           theta_cone;
     G4double           l_cone;
 
-
     G4double           gShield1Thickness;
+    G4double           gShield2Thickness;
     
     G4UserLimits*      pUserLimits;    //pointer to the UserLimits
     G4double           maxStep;          // max step length

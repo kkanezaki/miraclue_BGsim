@@ -33,11 +33,13 @@ private:
     G4UIcmdWithAString*        MaterialCmd;
     G4UIcmdWithADoubleAndUnit* MaxStepCmd;
     G4UIcmdWithADoubleAndUnit* MagFieldCmd;
+    G4UIcmdWithADoubleAndUnit* GasBoxSizeCmd;
     G4UIcmdWithADoubleAndUnit* NeutronShieldSizeCmd;
     G4UIcmdWithAString*        NeutronShieldTypeCmd;
     G4UIcmdWithAString*        NeutronShieldMaterialCmd;
     G4UIcmdWithABool *         GammaShield1Cmd;
     G4UIcmdWithADoubleAndUnit* GammaShield1ThicknessCmd;
+    G4UIcmdWithADoubleAndUnit* GammaShield2ThicknessCmd;
     G4UIcmdWithABool *         GammaShield2Cmd;
     
 };

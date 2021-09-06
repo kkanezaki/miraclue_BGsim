@@ -275,10 +275,12 @@ void mcParticleGun::GeneratePrimaryVertex_nAIST565(G4Event *anEvent){
     G4double tot_ene = k2 + mass;
     G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
     G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
     if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
                                   <<"   Energy: "<<k2<<G4endl
                                   <<" Position: "<<pos<<G4endl
                                   <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
     G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
     particle->SetMass( mass );
     particle->SetCharge( charge );

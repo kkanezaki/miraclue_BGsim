@@ -43,6 +43,12 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     MaxStepCmd->SetUnitCategory("Length");    
     MaxStepCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    GasBoxSizeCmd = new G4UIcmdWithADoubleAndUnit("/usr/det/setGasSize",this);
+    GasBoxSizeCmd->SetGuidance("Set the size of gas box");
+    GasBoxSizeCmd->SetParameterName("gas box size",false);
+    GasBoxSizeCmd->SetUnitCategory("Length");
+    GasBoxSizeCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
     NeutronShieldSizeCmd = new G4UIcmdWithADoubleAndUnit("/usr/nShield/size",this);
     NeutronShieldSizeCmd->SetGuidance("neutron shield size");
     NeutronShieldSizeCmd->SetParameterName("neutron shield size",false);
@@ -77,6 +83,13 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     GammaShield1ThicknessCmd->SetDefaultValue(5*cm);
     GammaShield1ThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    GammaShield2ThicknessCmd = new G4UIcmdWithADoubleAndUnit("/usr/gShield2/thickness",this);
+    GammaShield2ThicknessCmd->SetGuidance("UI command for the thickness of gamma shield 1");
+    GammaShield2ThicknessCmd->SetParameterName("thickness of gamma shield 2",false);
+    GammaShield2ThicknessCmd->SetUnitCategory("Length");
+    GammaShield2ThicknessCmd->SetDefaultValue(5*cm);
+    GammaShield2ThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
+
 }
 
 
@@ -90,6 +103,7 @@ mcDetectorMessenger::~mcDetectorMessenger()
     delete NeutronShieldMaterialCmd;
     delete GammaShield1Cmd;
     delete GammaShield1ThicknessCmd;
+    delete GammaShield1ThicknessCmd;
 
     delete usrDir;
     delete nShieldDir;
@@ -99,40 +113,42 @@ mcDetectorMessenger::~mcDetectorMessenger()
 }
 
 
-void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
-{ 
-    if( command == MaterialCmd ){
+void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue) {
+    if (command == MaterialCmd) {
         mcDetector->SetSensorMaterial(newValue);
-    } else if( command == MaxStepCmd ){
+    } else if (command == MaxStepCmd) {
         mcDetector->SetMaxStep(MaxStepCmd->GetNewDoubleValue(newValue));
-    } else if( command == MagFieldCmd ){
+    } else if (command == MagFieldCmd) {
         mcDetector->SetMagField(MagFieldCmd->GetNewDoubleValue(newValue));
-    } else if( command == NeutronShieldSizeCmd ){
+    } else if (command == GasBoxSizeCmd) {
+        mcDetector->SetGasBoxSize(GasBoxSizeCmd->GetNewDoubleValue(newValue));
+    } else if (command == NeutronShieldMaterialCmd) {
+        mcDetector->SetNeutronShieldMaterial(newValue);
+    } else if (command == NeutronShieldSizeCmd) {
         mcDetector->SetNeutronShieldSize(NeutronShieldSizeCmd->GetNewDoubleValue(newValue));
-    } else if( command == NeutronShieldTypeCmd ){
+    } else if (command == NeutronShieldTypeCmd) {
         mcDetector->SetNeutronShieldType(newValue);
-    } else if( command == GammaShield1Cmd){
-        //mcDetector->;
-    } else if( command == GammaShield1ThicknessCmd ){
+    } else if (command == GammaShield1ThicknessCmd) {
         mcDetector->SetGammaShield1Thickness(GammaShield1ThicknessCmd->GetNewDoubleValue(newValue));
+    } else if (command == GammaShield2ThicknessCmd) {
+        mcDetector->SetGammaShield2Thickness(GammaShield2ThicknessCmd->GetNewDoubleValue(newValue));
     }
 }
 
-G4String mcDetectorMessenger::GetCurrentValue(G4UIcommand * command)
-{
+G4String mcDetectorMessenger::GetCurrentValue(G4UIcommand *command) {
     G4String cv;
-    
-    if( command==MaterialCmd ){
-        cv =  mcDetector->GetSensorMaterial()->GetName();
-        
-    } else if( command==MaxStepCmd ){
-        cv =  MaxStepCmd->ConvertToString( mcDetector->GetMaxStep(),"mm");
-        
-    } else if( command==MagFieldCmd ){
-        cv =  MagFieldCmd->ConvertToString( mcDetector->GetFieldValue(),"tesla");
-        
+
+    if (command == MaterialCmd) {
+        cv = mcDetector->GetSensorMaterial()->GetName();
+
+    } else if (command == MaxStepCmd) {
+        cv = MaxStepCmd->ConvertToString(mcDetector->GetMaxStep(), "mm");
+
+    } else if (command == MagFieldCmd) {
+        cv = MagFieldCmd->ConvertToString(mcDetector->GetFieldValue(), "tesla");
+
     }
-    
+
     return cv;
 }
 
