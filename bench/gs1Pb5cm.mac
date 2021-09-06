@@ -1,12 +1,9 @@
-#/tracking/verbose 1
-#/event/verbose 1
+/tracking/verbose 0
+/event/verbose 0
 
 # change world parameter
 #/usr/det/setField 0.0 tesla
 #/usr/det/setMaxStep  100 cm
-
-#/usr/nShield/radius 10 cm
-#/usr/nShield/type hemisphere
 
 /gun/usr/mode nAIST565
 /gun/usr/particle neutron
@@ -26,7 +23,8 @@
 #/run/setCut 0.01 mm
 /usr/nShield/type cube
 /usr/nShield/size 25 cm
-#/usr/gShield1/thcikness 5 cm
+/usr/gShield1/thickness 0 cm
+/usr/gShield2/thickness 5 cm
 
 /run/initialize
 
