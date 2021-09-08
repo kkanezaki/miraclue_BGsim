@@ -45,7 +45,7 @@ mcDetectorConstruction::mcDetectorConstruction()
     DefineMaterials();
 
     SetSensorMaterial("Ar1atm");
-    SetNeutronShieldMaterial("polyethylene_boron10");
+    SetNeutronShieldMaterial("polyethylene_LiF50");
 
     // user limits   G4userLimits(step-length-max, track-length-max, time-cut, min-energy)
     double step_size = 0.1*mm;
@@ -53,7 +53,7 @@ mcDetectorConstruction::mcDetectorConstruction()
 
     // create commands for interactive definition of the calorimeter
     detectorMessenger = new mcDetectorMessenger(this);
-    l_gas             = 30.*cm;
+    l_gas             = 36.*cm;
     nShieldSize       = 25.*cm;
     nShieldThetaMax   = 180.*deg;
     nShieldShape      = "cube";
@@ -316,7 +316,7 @@ void mcDetectorConstruction::ConstructSphereBeamShield()
 void mcDetectorConstruction::ConstructCubeBeamShield()
 {
 
-    G4double l_gas_local             = 30*cm;  // length of gas box
+    G4double l_gas_local             = 36*cm;  // length of gas box
     G4double t_fiducial_local        = 1*cm;   // thickness of fiducial cut area
     G4double d_local                 = 100*cm; // distance of beam point to centere of chamber
     G4double theta_cone_local        = atan( (l_gas_local/2. - t_fiducial_local )/ (d_local - (l_gas_local/2. - t_fiducial_local )) )*(180/M_PI)*deg;
@@ -406,16 +406,27 @@ void mcDetectorConstruction::ConstructGammaShield1()
 void mcDetectorConstruction::ConstructChamber()
 {
 
-    G4int Ndiv_x = 30;
-    G4int Ndiv_y = 30;
-    G4int Ndiv_z = 30;
+    G4int Ndiv_x = 36;
+    G4int Ndiv_y = 36;
+    G4int Ndiv_z = 36;
     //G4int Ncopy = Ndiv_x * Ndiv_y * Ndiv_z;
 
-    l_gas = 30*cm;
+    l_gas = 36*cm;
+    G4double chamber_width = 5*mm;
     G4Colour ArColor (0,0.9,0.1,1.);
     G4Colour GasColor = ArColor;
     G4Material* gas_mat = G4Material::GetMaterial("vacuum");
+    G4Material* chamber_mat = G4Material::GetMaterial("SUS304");
     //G4Material* gas_mat = sensorMaterial;
+
+    /*
+    G4Box* chamber_box = new G4Box("chamber", 0.5*(l_gas+width), 0.5*(l_gas+width), 0.5*(l_gas+width));
+    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, , "chamber_lv");
+    G4VisAttributes* gas_att = new G4VisAttributes(1, GasColor);  chamber_lv->SetVisAttributes(gas_att);
+    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 0);
+    chamber_lv->SetUserLimits(pUserLimits);
+    */
 
     G4Box* gas_box = new G4Box("gas", 0.5*l_gas, 0.5*l_gas, 0.5*l_gas);
     G4LogicalVolume* gas_lv = new G4LogicalVolume(gas_box, gas_mat, "gas_lv");
