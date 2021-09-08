@@ -65,8 +65,7 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
 
     NeutronShieldMaterialCmd = new G4UIcmdWithAString("/usr/nShield/setMaterial",this);
     NeutronShieldMaterialCmd->SetGuidance("UI command for the material of a neutron shield");
-    NeutronShieldMaterialCmd->SetCandidates("polyethylene_boron10");
-    NeutronShieldMaterialCmd->SetParameterName("neutron shield type",false);
+    NeutronShieldMaterialCmd->SetParameterName("neutron shield material",false);
     NeutronShieldMaterialCmd->SetDefaultValue("polyethylene_boron10");
     NeutronShieldMaterialCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
@@ -98,12 +97,13 @@ mcDetectorMessenger::~mcDetectorMessenger()
     delete MaterialCmd;
     delete MagFieldCmd;
     delete MaxStepCmd;
+    delete GasBoxSizeCmd;
     delete NeutronShieldSizeCmd;
     delete NeutronShieldTypeCmd;
     delete NeutronShieldMaterialCmd;
     delete GammaShield1Cmd;
     delete GammaShield1ThicknessCmd;
-    delete GammaShield1ThicknessCmd;
+    delete GammaShield2ThicknessCmd;
 
     delete usrDir;
     delete nShieldDir;
