@@ -538,6 +538,9 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* LiF = new G4Material("LiF", 2.5*g/cm3, 2);
     LiF->AddElement(Li, 1); LiF->AddElement(F, 1);
 
+    G4Material* polyethylene_LiF01 = new G4Material("polyethylene_LiF01", 0.96*g/cm3, 2);
+    polyethylene_LiF01->AddMaterial(polyethylene, 0.99); polyethylene_LiF01->AddMaterial(LiF,0.01);
+
     G4Material* polyethylene_LiF10 = new G4Material("polyethylene_LiF10", 1.01*g/cm3, 2);
     polyethylene_LiF10->AddMaterial(polyethylene, 0.9); polyethylene_LiF10->AddMaterial(LiF, 0.1);
 
