@@ -8,8 +8,8 @@
 #/usr/nShield/radius 10 cm
 #/usr/nShield/type hemisphere
 
-/gun/usr/mode nAIST565
-/gun/usr/particle neutron
+/gun/usr/mode gAIST565_vertical
+#/gun/usr/particle neutron
 #inactivate msc
 #/process/inactivate msc
 
@@ -25,7 +25,9 @@
 #/usr/det/setMaterial NaI
 #/run/setCut 0.01 mm
 
+/usr/nShield/type none
+
 /run/initialize
 
-/run/beamOn 1000
+/run/beamOn 100000
 

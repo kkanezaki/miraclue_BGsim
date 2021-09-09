@@ -226,11 +226,14 @@ G4double mcParticleGun::GenerateCharge(G4ParticleDefinition *pd){
 
 
 void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
-    if     (Mode == "Default"        ) GeneratePrimaryVertex_Default(anEvent);
-    else if(Mode == "File"           ) GeneratePrimaryVertex_File(anEvent); //HEPEvt
-    else if(Mode == "nAIST565"       ) GeneratePrimaryVertex_nAIST565(anEvent);
-    //else if(Mode == "gAIST565_1.0.1" ) GeneratePrimaryVertex_gAIST565_1_0_1(anEvent);
-    //else if(Mode == "gAIST565_1.0.3" ) GeneratePrimaryVertex_gAIST565_1_0_3(anEvent);
+    if     (Mode == "Default"          ) GeneratePrimaryVertex_Default(anEvent);
+    else if(Mode == "File"             ) GeneratePrimaryVertex_File(anEvent); //HEPEvt
+    else if(Mode == "nAIST565"         ) GeneratePrimaryVertex_nAIST565(anEvent);
+    else if(Mode == "gAIST565_1.0.1"   ) GeneratePrimaryVertex_gAIST565_1_0_1(anEvent);
+    else if(Mode == "gAIST565_1.0.3"   ) GeneratePrimaryVertex_gAIST565_1_0_3(anEvent);
+    else if(Mode == "gAIST565_2.0.1"   ) GeneratePrimaryVertex_gAIST565_2_0_1(anEvent); //LiF50
+    else if(Mode == "gAIST565_vertical") GeneratePrimaryVertex_gAIST565_vertical(anEvent); //LiF50
+    else if(Mode == "gAIST565_vertical2") GeneratePrimaryVertex_gAIST565_vertical2(anEvent); //noshield
     else{ G4cout<<" ERROR : Mode has unusual value"<<G4endl;  return; }
 }
 
@@ -341,6 +344,333 @@ void mcParticleGun::GeneratePrimaryVertex_Default(G4Event* anEvent)
         }
     }
     anEvent->AddPrimaryVertex(vertex);
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_1_0_1(G4Event *evt){
+    double r_outer_sphere = 2.0*m;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={31, 373, 363, 275, 217, 192, 128, 82, 74, 74, 158, 45, 33, 34, 38, 21, 42, 30, 19, 9, 13, 18, 7, 12, 8, 20, 8, 6, 17, 11, 10, 11, 25, 10, 20, 19, 6, 12, 9, 14, 7, 12, 11, 13, 636, 4, 1, 4, 5, 3, 7, 1, 6, 5, 2, 7, 5, 1, 0, 6, 3, 6, 3, 4, 2, 8, 1, 1, 7, 2, 30, 3, 0, 4, 2, 0, 2, 2, 4, 1, 0, 1, 0, 0, 11, 3, 4, 0, 7, 5, 0, 1, 1, 2, 2, 1, 5, 2, 29, 0, 3, 0, 1, 3, 1, 4, 1, 0, 0, 0, 1, 3, 2, 0, 1, 1, 0, 1, 29, 0, 19, 0, 1, 0, 0, 2, 1, 8, 0, 0, 1, 2, 5, 1, 3, 1, 12, 0, 1, 1, 0, 0, 5, 1, 0, 13, 0, 7, 0, 0, 3, 0, 247, 0, 1, 0, 16, 0, 27, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 24, 14, 0, 0, 0, 0, 0, 0, 27, 0, 35, 0, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0};
+
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_1_0_3(G4Event *evt){
+    double r_outer_sphere = 2.0*m;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={29, 285, 201, 118, 96, 66, 42, 27, 29, 22, 28, 12, 9, 13, 10, 12, 7, 5, 6, 2, 8, 3, 7, 5, 8, 9, 6, 3, 6, 1, 4, 1, 1, 3, 1, 32, 0, 3, 2, 5, 5, 7, 3, 2, 353, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 16, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 4, 1, 1, 0, 0, 14, 0, 0, 0, 2, 0, 1, 7, 1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 3, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_2_0_1(G4Event *evt){
+    //double r_outer_sphere = 2.0*m;
+    double r_outer_sphere = 50*cm;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={40,51,20,14,7,10,7,2,6,2,6,2,2,1,3,3,2,1,2,0,5,2,4,6,3,1,3,2,2,3,3,1,4,3,5,5,3,1,3,2,2,1,1,1,32,0,0,0,0,1,0,0,0,0,0,1,0,2,2,1,0,1,0,1,1,0,0,0,1,1,1,2,0,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_vertical(G4Event *evt){
+    //double r_outer_sphere = 2.0*m;
+    /*
+    double r_outer_sphere = 50*cm;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+    */
+
+    G4ThreeVector pos = G4ThreeVector(0., 0., -1*m);
+    double dir_x = 0;
+    double dir_y = 0;
+    double dir_z = 1;
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={40,51,20,14,7,10,7,2,6,2,6,2,2,1,3,3,2,1,2,0,5,2,4,6,3,1,3,2,2,3,3,1,4,3,5,5,3,1,3,2,2,1,1,1,32,0,0,0,0,1,0,0,0,0,0,1,0,2,2,1,0,1,0,1,1,0,0,0,1,1,1,2,0,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_vertical2(G4Event *evt){
+    //double r_outer_sphere = 2.0*m;
+    /*
+    double r_outer_sphere = 50*cm;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+    */
+
+    G4ThreeVector pos = G4ThreeVector(0., 0., -1*m);
+    double dir_x = 0;
+    double dir_y = 0;
+    double dir_z = 1;
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={29, 285, 201, 118, 96, 66, 42, 27, 29, 22, 28, 12, 9, 13, 10, 12, 7, 5, 6, 2, 8, 3, 7, 5, 8, 9, 6, 3, 6, 1, 4, 1, 1, 3, 1, 32, 0, 3, 2, 5, 5, 7, 3, 2, 353, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 3, 3, 0, 0, 0, 0, 0, 0, 0, 3, 16, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 3, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 4, 1, 1, 0, 0, 14, 0, 0, 0, 2, 0, 1, 7, 1, 1, 1, 0, 1, 2, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 3, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
 }
 
 void mcParticleGun::GenerateNeutron(G4PrimaryParticle* neutron[1])

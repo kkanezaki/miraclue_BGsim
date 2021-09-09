@@ -415,24 +415,25 @@ void mcDetectorConstruction::ConstructChamber()
     G4double chamber_width = 5*mm;
     G4Colour ArColor (0,0.9,0.1,1.);
     G4Colour GasColor = ArColor;
-    G4Material* gas_mat = G4Material::GetMaterial("vacuum");
+    G4Colour ChamberColor (0., 0., 1., 1.);
+    G4Material* gas_mat = G4Material::GetMaterial("Ar1atm");
     G4Material* chamber_mat = G4Material::GetMaterial("SUS304");
     //G4Material* gas_mat = sensorMaterial;
 
-    /*
-    G4Box* chamber_box = new G4Box("chamber", 0.5*(l_gas+width), 0.5*(l_gas+width), 0.5*(l_gas+width));
-    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, , "chamber_lv");
-    G4VisAttributes* gas_att = new G4VisAttributes(1, GasColor);  chamber_lv->SetVisAttributes(gas_att);
+
+    G4Box* chamber_box = new G4Box("chamber", 0.5*l_gas+chamber_width, 0.5*l_gas+chamber_width, 0.5*l_gas+chamber_width);
+    G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
+    G4VisAttributes* chamber_att = new G4VisAttributes(1, ChamberColor);  chamber_lv->SetVisAttributes(chamber_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 0);
     chamber_lv->SetUserLimits(pUserLimits);
-    */
+
 
     G4Box* gas_box = new G4Box("gas", 0.5*l_gas, 0.5*l_gas, 0.5*l_gas);
     G4LogicalVolume* gas_lv = new G4LogicalVolume(gas_box, gas_mat, "gas_lv");
     G4VisAttributes* gas_att = new G4VisAttributes(1, GasColor);  gas_lv->SetVisAttributes(gas_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", logicLab, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", chamber_lv, false, 0);
     gas_lv->SetUserLimits(pUserLimits);
 
     G4Box* rep1 = new G4Box("rep1", l_gas*0.5, l_gas*0.5, (l_gas/Ndiv_z)*0.5);
