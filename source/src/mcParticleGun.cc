@@ -472,7 +472,7 @@ void mcParticleGun::GeneratePrimaryVertex_gAIST565_1_0_3(G4Event *evt){
 
 void mcParticleGun::GeneratePrimaryVertex_gAIST565_2_0_1(G4Event *evt){
     //double r_outer_sphere = 2.0*m;
-    double r_outer_sphere = 50*cm;
+    double r_outer_sphere = 18.1*sqrt(3)*cm;
 
     double costheta = 2.0*G4UniformRand()-1.0;
     double theta = acos(costheta);
@@ -623,7 +623,10 @@ void mcParticleGun::GeneratePrimaryVertex_gAIST565_vertical2(G4Event *evt){
     double dir_z = cos(theta);
     */
 
-    G4ThreeVector pos = G4ThreeVector(0., 0., -1*m);
+    G4double x = (G4UniformRand()-0.5)*36*cm;
+    G4double y = (G4UniformRand()-0.5)*36*cm;
+    //G4ThreeVector pos = G4ThreeVector(0., 0., -1*m);
+    G4ThreeVector pos = G4ThreeVector(x, y, -1*m);
     double dir_x = 0;
     double dir_y = 0;
     double dir_z = 1;

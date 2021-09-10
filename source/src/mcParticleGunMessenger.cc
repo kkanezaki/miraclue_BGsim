@@ -51,7 +51,7 @@ mcPG(pg)
     modeCmd->SetGuidance("Default, 0nbb, ...");
     modeCmd->SetParameterName("Mode",true,true);
     modeCmd->SetDefaultValue("Default");
-    modeCmd->SetCandidates("Default 0nbb File nAIST565 gAIST565_1.0.1 gAIST565_1.0.3 gAIST565_2.0.1 gAIST565_vertical");
+    modeCmd->SetCandidates("Default 0nbb File nAIST565 gAIST565_1.0.1 gAIST565_1.0.3 gAIST565_2.0.1 gAIST565_vertical gAIST565_vertical2");
 
     typeCmd = new G4UIcmdWithAString("/gun/usr/type",this);
     typeCmd->SetGuidance("Sets source distribution type.");

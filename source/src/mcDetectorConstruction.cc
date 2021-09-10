@@ -425,7 +425,7 @@ void mcDetectorConstruction::ConstructChamber()
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
     G4VisAttributes* chamber_att = new G4VisAttributes(1, ChamberColor);  chamber_lv->SetVisAttributes(chamber_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 1);
     chamber_lv->SetUserLimits(pUserLimits);
 
 
@@ -435,7 +435,7 @@ void mcDetectorConstruction::ConstructChamber()
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", chamber_lv, false, 0);
     gas_lv->SetUserLimits(pUserLimits);
-
+    /*
     G4Box* rep1 = new G4Box("rep1", l_gas*0.5, l_gas*0.5, (l_gas/Ndiv_z)*0.5);
     G4LogicalVolume* rep1_lv = new G4LogicalVolume(rep1, gas_mat, "rep1_lv");
     G4VisAttributes* rep1_att = new G4VisAttributes(1, GasColor);  rep1_lv->SetVisAttributes(rep1_att);
@@ -450,6 +450,7 @@ void mcDetectorConstruction::ConstructChamber()
     G4LogicalVolume* rep3_lv = new G4LogicalVolume(rep3, gas_mat, "rep3_lv");
     G4VisAttributes* rep3_att = new G4VisAttributes(1, GasColor);  rep3_lv->SetVisAttributes(rep3_att);
     new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, l_gas/Ndiv_x);
+    */
 
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
@@ -458,7 +459,8 @@ void mcDetectorConstruction::ConstructChamber()
         SDman->AddNewDetector( aSensorSD );
     }
     aSensorSD->SetAnalyzer(analyzer);
-    rep3_lv->SetSensitiveDetector(aSensorSD);
+    chamber_lv->SetSensitiveDetector(aSensorSD);
+    gas_lv->SetSensitiveDetector(aSensorSD);
 }
 
 ///////////////////////////////////////////////////////
