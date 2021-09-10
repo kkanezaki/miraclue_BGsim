@@ -329,9 +329,9 @@ void mcDetectorConstruction::ConstructCubeBeamShield()
     G4Material* nshield_mat = nShieldMaterial;
     G4Colour ShieldColor = (0.1, 0.1, 0.1, 1.0);
     G4Material* gshield1_mat = G4Material::GetMaterial("metalPb");
-    G4Colour gShield1Color = G4Colour(0.8,0.8,0.8, 1.0);
+    G4Colour gShield1Color = G4Colour(1,0.,0., 1.0);
     G4Material* gshield2_mat = G4Material::GetMaterial("metalPb");
-    G4Colour gShield2Color = G4Colour(0.3,0.3,0.3, 1.0);
+    G4Colour gShield2Color = G4Colour(1.,0.,0., 1.0);
 
     G4double halfedge_nshield    = nShieldSize;
     G4double halfedge_squarehole = (nShieldSize+gShield1Thickness)*tan(theta_cone_local);
@@ -373,6 +373,7 @@ void mcDetectorConstruction::ConstructCubeBeamShield()
     if (gShield2Thickness != 0) {
         G4Box *gshield2 = new G4Box("gshield2", l_gas / 2., l_gas / 2., gShield2Thickness / 2.);
         G4LogicalVolume *gshield2_lv = new G4LogicalVolume(gshield2, gshield2_mat, "gshield2_lv");
+        G4VisAttributes* gshield2_att = new G4VisAttributes(1, gShield2Color);  gshield2_lv->SetVisAttributes(gshield2_att);
         new G4PVPlacement(0, G4ThreeVector(0., 0., -0.5 * (l_gas + gShield2Thickness)), gshield2_lv, "gshield2_lv", logicLab, false, 0);
     }
 }
@@ -426,7 +427,7 @@ void mcDetectorConstruction::ConstructChamber()
     G4VisAttributes* chamber_att = new G4VisAttributes(1, ChamberColor);  chamber_lv->SetVisAttributes(chamber_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 1);
-    chamber_lv->SetUserLimits(pUserLimits);
+    //chamber_lv->SetUserLimits(pUserLimits);
 
 
     G4Box* gas_box = new G4Box("gas", 0.5*l_gas, 0.5*l_gas, 0.5*l_gas);
@@ -435,6 +436,7 @@ void mcDetectorConstruction::ConstructChamber()
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), gas_lv,"gas_pv", chamber_lv, false, 0);
     gas_lv->SetUserLimits(pUserLimits);
+
     /*
     G4Box* rep1 = new G4Box("rep1", l_gas*0.5, l_gas*0.5, (l_gas/Ndiv_z)*0.5);
     G4LogicalVolume* rep1_lv = new G4LogicalVolume(rep1, gas_mat, "rep1_lv");
@@ -451,6 +453,7 @@ void mcDetectorConstruction::ConstructChamber()
     G4VisAttributes* rep3_att = new G4VisAttributes(1, GasColor);  rep3_lv->SetVisAttributes(rep3_att);
     new G4PVReplica("rep3_pv", rep3_lv, rep2_lv, kXAxis, Ndiv_x, l_gas/Ndiv_x);
     */
+
 
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
     mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");

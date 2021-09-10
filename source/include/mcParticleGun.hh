@@ -38,6 +38,7 @@ public:
     void GeneratePrimaryVertex_gAIST565_1_0_1(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_1_0_3(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_2_0_1(G4Event *evt);
+    void GeneratePrimaryVertex_gAIST565_2_0_2(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_vertical(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_vertical2(G4Event *evt);
 

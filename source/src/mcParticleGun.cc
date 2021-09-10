@@ -232,6 +232,7 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
     else if(Mode == "gAIST565_1.0.1"   ) GeneratePrimaryVertex_gAIST565_1_0_1(anEvent);
     else if(Mode == "gAIST565_1.0.3"   ) GeneratePrimaryVertex_gAIST565_1_0_3(anEvent);
     else if(Mode == "gAIST565_2.0.1"   ) GeneratePrimaryVertex_gAIST565_2_0_1(anEvent); //LiF50
+    else if(Mode == "gAIST565_2.0.2"   ) GeneratePrimaryVertex_gAIST565_2_0_2(anEvent);
     else if(Mode == "gAIST565_vertical") GeneratePrimaryVertex_gAIST565_vertical(anEvent); //LiF50
     else if(Mode == "gAIST565_vertical2") GeneratePrimaryVertex_gAIST565_vertical2(anEvent); //noshield
     else{ G4cout<<" ERROR : Mode has unusual value"<<G4endl;  return; }
@@ -500,6 +501,69 @@ void mcParticleGun::GeneratePrimaryVertex_gAIST565_2_0_1(G4Event *evt){
     double ene_hist_wid = 50; // keV
     const int ene_hist_num = 200;
     double ene_hist[ene_hist_num]={40,51,20,14,7,10,7,2,6,2,6,2,2,1,3,3,2,1,2,0,5,2,4,6,3,1,3,2,2,3,3,1,4,3,5,5,3,1,3,2,2,1,1,1,32,0,0,0,0,1,0,0,0,0,0,1,0,2,2,1,0,1,0,1,1,0,0,0,1,1,1,2,0,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    double ene_hist_sum[ene_hist_num]={};
+    for(int i=0; i<ene_hist_num; i++){
+        for(int j=0; j<=i; j++){
+            ene_hist_sum[i] += ene_hist[j];
+        }
+    }
+    double param = G4UniformRand()*ene_hist_sum[ene_hist_num-1];
+    double ene = 0;
+    for(int i=0; i<ene_hist_num; i++){
+        if(ene_hist_sum[i]<=param && param <ene_hist_sum[i+1]){
+            ene = ene_hist_wid*( (double)i+G4UniformRand());
+            break;
+        }
+    }
+
+    G4double tot_ene = ene*0.001 + mass; // MeV
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<ene<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    evt->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_gAIST565_2_0_2(G4Event *evt){
+    //double r_outer_sphere = 2.0*m;
+    double r_outer_sphere = 18.1*sqrt(3)*cm;
+
+    double costheta = 2.0*G4UniformRand()-1.0;
+    double theta = acos(costheta);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double x_pos = r_outer_sphere*sin(theta)*cos(phi);
+    double y_pos = r_outer_sphere*sin(theta)*sin(phi);
+    double z_pos = r_outer_sphere*cos(theta);
+    G4ThreeVector pos = G4ThreeVector(x_pos, y_pos, z_pos);
+    costheta = 2.0*G4UniformRand()-1.0;
+    theta = acos(costheta);
+    phi = G4UniformRand()*2.0*M_PI;
+    double dir_x = sin(theta)*cos(phi);
+    double dir_y = sin(theta)*sin(phi);
+    double dir_z = cos(theta);
+
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("gamma");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+
+    double ene_hist_wid = 50; // keV
+    const int ene_hist_num = 200;
+    double ene_hist[ene_hist_num]={0,40,51,20,14,7,10,7,2,6,2,6,2,2,1,3,3,2,1,2,0,5,2,4,6,3,1,3,2,2,3,3,1,4,3,5,5,3,1,3,2,2,1,1,1,32,0,0,0,0,1,0,0,0,0,0,1,0,2,2,1,0,1,0,1,1,0,0,0,1,1,1,2,0,1,0,0,0,0,2,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     double ene_hist_sum[ene_hist_num]={};
     for(int i=0; i<ene_hist_num; i++){
         for(int j=0; j<=i; j++){
