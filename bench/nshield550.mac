@@ -8,17 +8,14 @@
 #inactivate msc
 #/process/inactivate msc
 
-/gun/position 0 0 0 cm
-/gun/direction 0 0 1
-/gun/particle neutron
-/gun/energy 0.500 MeV
-
 #/process/em/fluo true
 #/process/em/auger true
 #/process/em/augerCascade true
 
 #/usr/det/setMaterial NaI
 #/run/setCut 0.01 mm
+
+/gun/usr/mode nShield550
 
 /run/initialize
 

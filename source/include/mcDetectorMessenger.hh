@@ -28,6 +28,7 @@ private:
     G4UIdirectory*             usrDir;
     G4UIdirectory*             detDir;
     G4UIdirectory*             nShieldDir;
+    G4UIdirectory*             nShield2Dir;
     G4UIdirectory*             gShield1Dir;
     G4UIdirectory*             gShield2Dir;
     G4UIcmdWithAString*        MaterialCmd;
@@ -36,6 +37,8 @@ private:
     G4UIcmdWithADoubleAndUnit* GasBoxSizeCmd;
     G4UIcmdWithADoubleAndUnit* NeutronShieldSizeCmd;
     G4UIcmdWithAString*        NeutronShieldTypeCmd;
+    G4UIcmdWithADoubleAndUnit* InnerShieldSizeCmd;
+    G4UIcmdWithADoubleAndUnit* OuterShieldThicknessCmd;
     G4UIcmdWithAString*        NeutronShieldMaterialCmd;
     G4UIcmdWithABool *         GammaShield1Cmd;
     G4UIcmdWithADoubleAndUnit* GammaShield1ThicknessCmd;

@@ -35,6 +35,7 @@ public:
     //void GeneratePrimaryVertex_0nbb(G4Event *evt);
     void GeneratePrimaryVertex_File(G4Event *evt);
     void GeneratePrimaryVertex_nAIST565(G4Event *evt);
+    void GeneratePrimaryVertex_nShield550(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_1_0_1(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_1_0_3(G4Event *evt);
     void GeneratePrimaryVertex_gAIST565_2_0_1(G4Event *evt);

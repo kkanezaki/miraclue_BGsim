@@ -229,6 +229,7 @@ void mcParticleGun::GeneratePrimaryVertex(G4Event* anEvent){
     if     (Mode == "Default"          ) GeneratePrimaryVertex_Default(anEvent);
     else if(Mode == "File"             ) GeneratePrimaryVertex_File(anEvent); //HEPEvt
     else if(Mode == "nAIST565"         ) GeneratePrimaryVertex_nAIST565(anEvent);
+    else if(Mode == "nShield550"       ) GeneratePrimaryVertex_nShield550(anEvent);
     else if(Mode == "gAIST565_1.0.1"   ) GeneratePrimaryVertex_gAIST565_1_0_1(anEvent);
     else if(Mode == "gAIST565_1.0.3"   ) GeneratePrimaryVertex_gAIST565_1_0_3(anEvent);
     else if(Mode == "gAIST565_2.0.1"   ) GeneratePrimaryVertex_gAIST565_2_0_1(anEvent); //LiF50
@@ -263,6 +264,62 @@ void mcParticleGun::GeneratePrimaryVertex_nAIST565(G4Event *anEvent){
     double p2_x = p2_cm_x;
     double p2_z = gama*p2_cm_z + E2_cm*beta*gama;
     double k2 = sqrt(p2_z*p2_z+p2_x*p2_x + mass2*mass2)-mass2;
+
+    double costheta = p2_z/sqrt(p2_z*p2_z+p2_x*p2_x);
+    double sintheta = p2_x/sqrt(p2_z*p2_z+p2_x*p2_x);
+    double phi = G4UniformRand()*2.0*M_PI;
+    double dir_z = costheta;
+    double dir_x = sintheta*cos(phi);
+    double dir_y = sintheta*sin(phi);
+
+    G4ParticleTable *particleTable = G4ParticleTable::GetParticleTable();
+    G4ParticleDefinition* pd = particleTable->FindParticle("neutron");
+    G4ThreeVector pol = G4ThreeVector(0.0, 0.0, 0.0);
+    G4double charge = GenerateCharge(pd);
+    G4double mass = pd->GetPDGMass();
+    G4double tot_ene = k2 + mass;
+    G4double pmom = std::sqrt(tot_ene*tot_ene-mass*mass);
+    G4double px = pmom*dir_x, py = pmom*dir_y, pz = pmom*dir_z;
+    /*
+    if(verbosityLevel >= 1) G4cout<<" Particle: "<<pd->GetParticleName()<<G4endl
+                                  <<"   Energy: "<<k2<<G4endl
+                                  <<" Position: "<<pos<<G4endl
+                                  <<"Direction: "<<dir_x<<","<<dir_y<<","<<dir_z<<G4endl;
+    */
+    G4PrimaryParticle* particle = new G4PrimaryParticle(pd,px,py,pz);
+    particle->SetMass( mass );
+    particle->SetCharge( charge );
+    particle->SetPolarization(pol.x(), pol.y(), pol.z());
+
+    vertex->SetPrimary( particle );
+    anEvent->AddPrimaryVertex( vertex );
+}
+
+void mcParticleGun::GeneratePrimaryVertex_nShield550(G4Event *anEvent){
+    //G4ThreeVector pos = GeneratePosition();
+    G4ThreeVector pos = G4ThreeVector(0*m,0,0*m);
+    G4double time = GenerateTime();
+    G4PrimaryVertex* vertex = new G4PrimaryVertex(pos, time);
+
+    double mass0=938.767, mass1=6535.254, mass2=939.5493, mass3=6536.116;//MeV
+    double K0=2.3;//, Q=-1.63;//MeV
+    double E0=K0+mass0;
+    double p0=sqrt(E0*E0-mass0*mass0);
+    double s_param=(E0+mass1)*(E0+mass1)-p0*p0;
+    double beta=p0/(E0+mass1);
+    double gama=1./sqrt(1.-beta*beta);
+    double p2_cm = 1./2./sqrt(s_param)*sqrt(mass3*mass3*mass3*mass3 +mass2*mass2*mass2*mass2 +s_param*s_param
+                                            -2.*(mass2*mass2*mass3*mass3 +mass2*mass2*s_param +mass3*mass3*s_param));
+    double E2_cm = sqrt(p2_cm*p2_cm + mass2*mass2);
+
+    double costheta_cm = G4UniformRand()*2.0-1.0;
+    double sintheta_cm = sqrt(1.-costheta_cm*costheta_cm);
+    double p2_cm_z = p2_cm*costheta_cm;
+    double p2_cm_x = p2_cm*sintheta_cm;
+    double p2_x = p2_cm_x;
+    double p2_z = gama*p2_cm_z + E2_cm*beta*gama;
+    //double k2 = sqrt(p2_z*p2_z+p2_x*p2_x + mass2*mass2)-mass2;
+    double k2 = 0.550; //MeV
 
     double costheta = p2_z/sqrt(p2_z*p2_z+p2_x*p2_x);
     double sintheta = p2_x/sqrt(p2_z*p2_z+p2_x*p2_x);

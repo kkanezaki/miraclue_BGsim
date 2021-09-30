@@ -110,13 +110,14 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     */
 
 
-    ConstructLaboratory();
-    ConstructBeamShield();
+    //ConstructLaboratory();
+    //ConstructBeamShield();
     //ConstructGammaShield1();
     //ConstructSphereBeamShield();
     //ConstructCubeBeamShield();
-    ConstructChamber();
+    //ConstructChamber();
 
+    ConstructTestShield();
 
     //////////////////////////////// devided gas box (for Intrinsic BG) ////////////////////////////////
     /*
@@ -188,6 +189,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     */
 
 
+
     // Sensor
     /*
     solidSensor = new G4Tubs("Sensor",0.0*cm,2.54*cm,18.95*cm,0,CLHEP::twopi);
@@ -213,6 +215,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     aSensorSD->SetAnalyzer(analyzer);
     logicSensor->SetSensitiveDetector(aSensorSD);
     */
+
 
     //test_lv->SetSensitiveDetector(aSensorSD);
 
@@ -426,7 +429,7 @@ void mcDetectorConstruction::ConstructChamber()
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
     G4VisAttributes* chamber_att = new G4VisAttributes(1, ChamberColor);  chamber_lv->SetVisAttributes(chamber_att);
     //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "test_pv", gas_lv, physWorld, false, 0);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"gas_pv", logicLab, false, 1);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), chamber_lv,"chamber_pv", logicLab, false, 1);
     //chamber_lv->SetUserLimits(pUserLimits);
 
 
@@ -464,6 +467,39 @@ void mcDetectorConstruction::ConstructChamber()
     aSensorSD->SetAnalyzer(analyzer);
     chamber_lv->SetSensitiveDetector(aSensorSD);
     gas_lv->SetSensitiveDetector(aSensorSD);
+}
+
+void mcDetectorConstruction::ConstructTestShield()
+{
+    G4Material* outer_mat = G4Material::GetMaterial("LiF");
+    G4Material* inner_mat = G4Material::GetMaterial("polyethylene_LiF50");
+    G4double l_inner = 25*cm;
+    G4double w_outer = 2*cm;
+    G4Colour outerColor (0,0,1,1);
+    G4Colour innerColor (0,1,0,1);
+
+    G4Box* outer_box = new G4Box("outer_box", 0.5*l_inner+w_outer, 0.5*l_inner+w_outer, 0.5*l_inner+w_outer);
+    G4LogicalVolume* outer_lv = new G4LogicalVolume(outer_box, outer_mat, "outer_lv");
+    G4VisAttributes* outer_att = new G4VisAttributes(1, outerColor);  outer_lv->SetVisAttributes(outer_att);
+    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.*m), outer_lv, "outer_pv", logicWorld, false, 1);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "outer_pv", outer_lv, physWorld, false, 0);
+
+    G4Box* inner_box = new G4Box("inner_box", 0.5*l_inner, 0.5*l_inner, 0.5*l_inner);
+    G4LogicalVolume* inner_lv = new G4LogicalVolume(inner_box, inner_mat, "inner_lv");
+    G4VisAttributes* inner_att = new G4VisAttributes(1, innerColor);  inner_lv->SetVisAttributes(inner_att);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inner_lv,"inner_pv", outer_lv, false, 0);
+    inner_lv->SetUserLimits(pUserLimits);
+
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
+    if ( aSensorSD == 0){
+        aSensorSD = new mcSensorSD("mc/SensorSD");
+        SDman->AddNewDetector( aSensorSD );
+    }
+    aSensorSD->SetAnalyzer(analyzer);
+    //logicSensor->SetSensitiveDetector(aSensorSD);
+    outer_lv->SetSensitiveDetector(aSensorSD);
+    inner_lv->SetSensitiveDetector(aSensorSD);
 }
 
 ///////////////////////////////////////////////////////

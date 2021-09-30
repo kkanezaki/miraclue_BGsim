@@ -72,7 +72,7 @@ G4int mcSensorHit::operator==(const mcSensorHit& right) const
 void mcSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double valEIn)
 {
     copyNO   =  copy;
-    eDep		= eLoss;
+    eDep	 =  eLoss;
     eIn      =  valEIn;
     trackID  =  track->GetTrackID();
     codePDG  =  track->GetDefinition()->GetPDGEncoding();
@@ -80,9 +80,9 @@ void mcSensorHit::Set(int copy, const G4Track* track,G4double eLoss, G4double va
     energy   =  track->GetKineticEnergy();
     momentum =  track->GetMomentum();
     pos      =  track->GetPosition();
-    if(time > track->GetGlobalTime()){
+    //if(time > track->GetGlobalTime()){
         time     =  track->GetGlobalTime();
-    }
+    //}
 }
 
 void mcSensorHit::Draw()

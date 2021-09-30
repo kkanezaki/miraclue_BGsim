@@ -107,7 +107,7 @@ private:
     void ConstructCubeBeamShield();
     void ConstructChamber();
     void ConstructGammaShield1();
-    //void ConstructTestMaterial();
+    void ConstructTestShield();
 
 };
 

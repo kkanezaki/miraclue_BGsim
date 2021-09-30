@@ -73,7 +73,11 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     G4int trackID = aTrack->GetTrackID();
 
     // Igrone initial particle
-    //if (trackID != 1) return false;
+    //if (trackID == 1) return false;
+
+    // Only neutron & gamma
+    if (aTrack->GetDefinition()->GetPDGEncoding() != 2112 &&
+        aTrack->GetDefinition()->GetPDGEncoding() != 22) return false;
 
     G4int NbHits = sensorCollection->entries();
     G4bool found = false;
@@ -86,8 +90,9 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     */
 
     for (G4int iHit=0; (iHit<NbHits) && (!found) ;iHit++) {
-        found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) && (trackID == (*sensorCollection)[iHit]->GetTrackID() ) ;
-
+        //found = (copyNO == (*sensorCollection)[iHit]->GetCopyNO() ) && (trackID == (*sensorCollection)[iHit]->GetTrackID() ) ;
+        //found = ( trackID == (*sensorCollection)[iHit]->GetTrackID() );
+        found = true;
         if (found) {
             // check time
             if (std::abs(time-(*sensorCollection)[iHit]->GetTime()) < tResolution) {

@@ -1,0 +1,45 @@
+##G4.PRIM-FORMAT-2.4
+/BoundingBox       -433.012702       -433.012702        -1433.0127        433.012702        433.012702       -566.987298
+!SetCamera
+!OpenDevice
+!BeginModeling
+#--------------------
+#/PVName     nshield_pv.0
+/ColorRGB                 1                 1                 1
+/ForceWireframe  0
+/Origin                 0                 0             -1000
+/BaseVector                 1                 0                 0                 0                 1                 0
+/Polyhedron
+/Vertex              -250              -250              -250
+/Vertex               250              -250              -250
+/Vertex               250               250              -250
+/Vertex              -250               250              -250
+/Vertex              -250              -250               250
+/Vertex               250              -250               250
+/Vertex               250               250               250
+/Vertex              -250               250               250
+/Vertex          -0.00775          -0.00575          -0.00425
+/Vertex          -0.00775          -0.00575          -0.00425
+/Vertex          -0.00775          -0.00575          -0.00425
+/Vertex          -0.00775          -0.00575          -0.00425
+/Vertex       -51.2125693       -51.2105693         249.99575
+/Vertex        51.1970693       -51.2105693         249.99575
+/Vertex        51.1970693        51.1990693         249.99575
+/Vertex       -51.2125693        51.1990693         249.99575
+/Facet  1  4  3  2
+/Facet  5  8  4  1
+/Facet  8  7  3  4
+/Facet  7  6  2  3
+/Facet  6  5  1  2
+/Facet  5  6  7  8
+/Facet  9  10  11  12
+/Facet  13  9  12  16
+/Facet  16  12  11  15
+/Facet  15  11  10  14
+/Facet  14  10  9  13
+/Facet  13  16  15  14
+/EndPolyhedron
+#--------------------
+!EndModeling
+!DrawAll
+!CloseDevice
