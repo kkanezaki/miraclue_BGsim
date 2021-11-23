@@ -110,14 +110,14 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     */
 
 
-    //ConstructLaboratory();
+    ConstructLaboratory();
     //ConstructBeamShield();
     //ConstructGammaShield1();
     //ConstructSphereBeamShield();
     //ConstructCubeBeamShield();
     //ConstructChamber();
-
-    ConstructTestShield();
+    //ConstructTestShield();
+    ConstructScintillator();
 
     //////////////////////////////// devided gas box (for Intrinsic BG) ////////////////////////////////
     /*
@@ -481,13 +481,14 @@ void mcDetectorConstruction::ConstructTestShield()
     G4Box* outer_box = new G4Box("outer_box", 0.5*l_inner+w_outer, 0.5*l_inner+w_outer, 0.5*l_inner+w_outer);
     G4LogicalVolume* outer_lv = new G4LogicalVolume(outer_box, outer_mat, "outer_lv");
     G4VisAttributes* outer_att = new G4VisAttributes(1, outerColor);  outer_lv->SetVisAttributes(outer_att);
-    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.*m), outer_lv, "outer_pv", logicWorld, false, 1);
+    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), outer_lv, "outer_pv", logicWorld, false, 1);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "outer_pv", outer_lv, physWorld, false, 0);
 
     G4Box* inner_box = new G4Box("inner_box", 0.5*l_inner, 0.5*l_inner, 0.5*l_inner);
     G4LogicalVolume* inner_lv = new G4LogicalVolume(inner_box, inner_mat, "inner_lv");
     G4VisAttributes* inner_att = new G4VisAttributes(1, innerColor);  inner_lv->SetVisAttributes(inner_att);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), inner_lv,"inner_pv", outer_lv, false, 0);
+    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "inner_pv", inner_lv, physWorld, false, 0);
     inner_lv->SetUserLimits(pUserLimits);
 
     G4SDManager* SDman = G4SDManager::GetSDMpointer();
@@ -500,6 +501,45 @@ void mcDetectorConstruction::ConstructTestShield()
     //logicSensor->SetSensitiveDetector(aSensorSD);
     outer_lv->SetSensitiveDetector(aSensorSD);
     inner_lv->SetSensitiveDetector(aSensorSD);
+}
+
+void mcDetectorConstruction::ConstructScintillator()
+{
+    G4String scinti_name;// = "GAGG";
+    G4Material* scinti_mat = G4Material::GetMaterial(scinti_name);
+    static const G4double inch = 2.54*cm;
+    G4double scinti_size;
+
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
+    if ( aSensorSD == 0){
+        aSensorSD = new mcSensorSD("mc/SensorSD");
+        SDman->AddNewDetector( aSensorSD );
+    }
+    aSensorSD->SetAnalyzer(analyzer);
+
+    scinti_name = "BGO";
+    if (scinti_name=="BGO"){
+        G4double scinti_width  = 1*inch;
+        G4double scinti_radius = 1*inch;
+        G4Tubs* scinti_tube = new G4Tubs("scinti_tube", 0, scinti_radius, scinti_width/2, 0*deg, 360*deg);
+        G4LogicalVolume* scinti_lv = new G4LogicalVolume(scinti_tube, scinti_mat, "scinti_lv");
+        //logicScinti = new G4LogicalVolume(scinti_tube, scinti_mat, "scinti_lv");
+        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicLab, false, 100);
+        scinti_lv->SetSensitiveDetector(aSensorSD);
+    } else {
+        scinti_size = 1*cm;
+        G4Box* scinti_box = new G4Box("scinti_box", 0.5*scinti_size, 0.5*scinti_size, 0.5*scinti_size);
+        G4LogicalVolume* scinti_lv = new G4LogicalVolume(scinti_box, scinti_mat, "scinti_lv");
+        //G4VisAttributes* scinti_att = new G4VisAttributes(1, outerColor);  outer_lv->SetVisAttributes(outer_att);
+        //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "scinti_pv", scinti_lv, physWorld, false, 0);
+        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicLab, false, 100);
+        scinti_lv->SetSensitiveDetector(aSensorSD);
+    }
+
+
+    //logicScinti->SetSensitiveDetector(aSensorSD);
+
 }
 
 ///////////////////////////////////////////////////////
@@ -524,27 +564,32 @@ void mcDetectorConstruction::DefineMaterials()
     //
     // define Elements
     //
-    G4Element* H  = new G4Element("Hydrogen", "H",  1.,  1.00794   *g/mole);
-    G4Element* He = new G4Element("Helium",   "He", 2.,  4.002602  *g/mole);
-    G4Element* Li = new G4Element("lithium",  "Li", 3.,  6.941     *g/mole);
-    G4Element* B  = new G4Element("Bolone",   "B",  5.,  10.81     *g/mole);
-    G4Element* C  = new G4Element("Carbon",   "C",  6.,  12.011    *g/mole);
-    G4Element* N  = new G4Element("Nitrogen", "N",  7.,  14.00674  *g/mole);
-    G4Element* O  = new G4Element("Oxygen",   "O",  8.,  16.00     *g/mole);
-    G4Element* F  = new G4Element("Fluorine", "F",  9.,  18.9984032*g/mole);
-    G4Element* Na = new G4Element("Natrium",  "Na", 11., 22.99     *g/mole);
-    G4Element* Al = new G4Element("Aluminium","Al", 13., 26.98     *g/mole);
-    G4Element* Si = new G4Element("Silicon",  "Si", 14., 28.09     *g/mole);
-    G4Element* Ar = new G4Element("Argon",    "Ar", 18., 39.948    *g/mole);
-    G4Element* Ca = new G4Element("Calcium",  "Ca", 20., 40.078    *g/mole);
-    G4Element* Cr = new G4Element("Chromium", "Cr", 24., 51.9961   *g/mole);
-    G4Element* Fe = new G4Element("Iron",     "Fe", 26., 55.85     *g/mole);
-    G4Element* Co = new G4Element("Cobalt",   "Co", 27., 58.9332   *g/mole);
-    G4Element* Ni = new G4Element("Nickel",   "Ni", 28., 58.6934   *g/mole);
-    G4Element* Cu = new G4Element("Copper",   "Cu", 29., 63.55     *g/mole);
-    G4Element* I  = new G4Element("Iodine",   "I",  53., 126.90447 *g/mole);
-    G4Element* Xe = new G4Element("Xenon",    "Xe", 54., 131.293   *g/mole);
-    G4Element* Pb = new G4Element("Lead",     "Pb", 82., 207.2     *g/mole);
+    G4Element* H  = new G4Element("Hydrogen",  "H",  1.,  1.00794   *g/mole);
+    G4Element* He = new G4Element("Helium",    "He", 2.,  4.002602  *g/mole);
+    G4Element* Li = new G4Element("lithium",   "Li", 3.,  6.941     *g/mole);
+    G4Element* B  = new G4Element("Bolone",    "B",  5.,  10.81     *g/mole);
+    G4Element* C  = new G4Element("Carbon",    "C",  6.,  12.011    *g/mole);
+    G4Element* N  = new G4Element("Nitrogen",  "N",  7.,  14.00674  *g/mole);
+    G4Element* O  = new G4Element("Oxygen",    "O",  8.,  16.00     *g/mole);
+    G4Element* F  = new G4Element("Fluorine",  "F",  9.,  18.9984032*g/mole);
+    G4Element* Na = new G4Element("Natrium",   "Na", 11., 22.99     *g/mole);
+    G4Element* Al = new G4Element("Aluminium", "Al", 13., 26.98     *g/mole);
+    G4Element* Si = new G4Element("Silicon",   "Si", 14., 28.09     *g/mole);
+    G4Element* Ar = new G4Element("Argon",     "Ar", 18., 39.948    *g/mole);
+    G4Element* Ca = new G4Element("Calcium",   "Ca", 20., 40.078    *g/mole);
+    G4Element* Cr = new G4Element("Chromium",  "Cr", 24., 51.9961   *g/mole);
+    G4Element* Fe = new G4Element("Iron",      "Fe", 26., 55.85     *g/mole);
+    G4Element* Co = new G4Element("Cobalt",    "Co", 27., 58.9332   *g/mole);
+    G4Element* Ni = new G4Element("Nickel",    "Ni", 28., 58.6934   *g/mole);
+    G4Element* Cu = new G4Element("Copper",    "Cu", 29., 63.55     *g/mole);
+    G4Element* Ga = new G4Element("Gallium",   "Ga", 31., 69.723    *g/mole);
+    G4Element* Ge = new G4Element("Germanium", "Ge", 32., 72.63     *g/mole);
+    G4Element* I  = new G4Element("Iodine",    "I",  53., 126.90447 *g/mole);
+    G4Element* Xe = new G4Element("Xenon",     "Xe", 54., 131.293   *g/mole);
+    G4Element* Cs = new G4Element("Cesium",    "Cs", 55., 132.905452*g/mole);
+    G4Element* Gd = new G4Element("Gadolinium","Gd", 64., 157.25    *g/mole);
+    G4Element* Pb = new G4Element("Lead",     "Pb",  82., 207.2     *g/mole);
+    G4Element* Bi = new G4Element("Bismuth",  "Bi",  83., 208.9804  *g/mole);
 
     //
     // define an Element from isotopes, by relative abundance
@@ -566,51 +611,68 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* vacuum = new G4Material("vacuum", 1., 1.*g/mole, 1.e-20*g/cm3, kStateGas, 0.1*kelvin, 1.e-20*bar);
 
     G4Material* SUS304 = new G4Material("SUS304", 8.03*g/cm3, 3);
-    SUS304->AddElement(Fe, 0.7); SUS304->AddElement(Ni, 0.1); SUS304->AddElement(Cr, 0.2);
+    SUS304->AddElement(Fe, 0.7);
+    SUS304->AddElement(Ni, 0.1);
+    SUS304->AddElement(Cr, 0.2);
 
     G4Material* GXe10atm = new G4Material("GXe10atm", 10.0*5.894*mg/cm3, 1, kStateGas, 300.00*kelvin, 10.0*atmosphere);
     GXe10atm->AddElement(Xe, 1);
 
     G4Material* PEEK = new G4Material("PEEK", 1.3*g/cm3, 3);
-    PEEK->AddElement(C,20); PEEK->AddElement(O,3); PEEK->AddElement(H,12);
+    PEEK->AddElement(C,20);
+    PEEK->AddElement(O,3);
+    PEEK->AddElement(H,12);
 
     G4Material* MPPC = new G4Material("MPPC", 1.0*g/cm3, 2);//??????
-    MPPC->AddElement(Al,2); MPPC->AddElement(O,3);
+    MPPC->AddElement(Al,2);
+    MPPC->AddElement(O,3);
 
     G4Material* polyethylene = new G4Material("polyethylene",0.95*g/cm3,2);
-    polyethylene->AddElement(H, 2); polyethylene->AddElement(C,1);
+    polyethylene->AddElement(H, 2);
+    polyethylene->AddElement(C,1);
 
     G4Material* polyethylene_boron10 = new G4Material("polyethylene_boron10",0.98*g/cm3,4);
-    polyethylene_boron10->AddElement(H, 0.129); polyethylene_boron10->AddElement(C,0.771);
-    polyethylene_boron10->AddElement(B,0.031); polyethylene_boron10->AddElement(O, 0.069);
+    polyethylene_boron10->AddElement(H, 0.129);
+    polyethylene_boron10->AddElement(C,0.771);
+    polyethylene_boron10->AddElement(B,0.031);
+    polyethylene_boron10->AddElement(O, 0.069);
 
     G4Material* polyethylene_boron20 = new G4Material("polyethylene_boron20",1.04*g/cm3,4);
-    polyethylene_boron20->AddElement(H, 0.114); polyethylene_boron20->AddElement(C,0.686);
-    polyethylene_boron20->AddElement(B,0.062); polyethylene_boron20->AddElement(O, 0.138);
+    polyethylene_boron20->AddElement(H, 0.114);
+    polyethylene_boron20->AddElement(C,0.686);
+    polyethylene_boron20->AddElement(B,0.062);
+    polyethylene_boron20->AddElement(O, 0.138);
 
     G4Material* LiF = new G4Material("LiF", 2.5*g/cm3, 2);
     LiF->AddElement(Li, 1); LiF->AddElement(F, 1);
 
     G4Material* polyethylene_LiF01 = new G4Material("polyethylene_LiF01", 0.96*g/cm3, 2);
-    polyethylene_LiF01->AddMaterial(polyethylene, 0.99); polyethylene_LiF01->AddMaterial(LiF,0.01);
+    polyethylene_LiF01->AddMaterial(polyethylene, 0.99);
+    polyethylene_LiF01->AddMaterial(LiF,0.01);
 
     G4Material* polyethylene_LiF10 = new G4Material("polyethylene_LiF10", 1.01*g/cm3, 2);
-    polyethylene_LiF10->AddMaterial(polyethylene, 0.9); polyethylene_LiF10->AddMaterial(LiF, 0.1);
+    polyethylene_LiF10->AddMaterial(polyethylene, 0.9);
+    polyethylene_LiF10->AddMaterial(LiF, 0.1);
 
     G4Material* polyethylene_LiF50 = new G4Material("polyethylene_LiF50", 1.38*g/cm3, 2);
-    polyethylene_LiF50->AddMaterial(polyethylene, 0.5); polyethylene_LiF50->AddMaterial(LiF, 0.5);
+    polyethylene_LiF50->AddMaterial(polyethylene, 0.5);
+    polyethylene_LiF50->AddMaterial(LiF, 0.5);
 
     G4Material* acrylic = new G4Material("acrylic", 1.2*g/cm3, 3);
-    acrylic->AddElement(H, 8); acrylic->AddElement(C, 5); acrylic->AddElement(O, 2);
+    acrylic->AddElement(H, 8);
+    acrylic->AddElement(C, 5);
+    acrylic->AddElement(O, 2);
 
     G4Material* polystyrene = new G4Material("polystyrene", 1.05*g/cm3, 2);
-    polystyrene->AddElement(C,1); polystyrene->AddElement(H,1);
+    polystyrene->AddElement(C,1);
+    polystyrene->AddElement(H,1);
 
     G4Material* metalCu = new G4Material("metalCu", 8.960*g/cm3, 1);
     metalCu->AddElement(Cu,1);
 
     G4Material* PTFE = new G4Material("PTFE", 2.2*g/cm3, 2);
-    PTFE->AddElement(C,1); PTFE->AddElement(F,2);
+    PTFE->AddElement(C,1);
+    PTFE->AddElement(F,2);
 
     G4Material* metalPb = new G4Material("metalPb", 11.340*g/cm3, 1);
     metalPb->AddElement(Pb, 1);
@@ -619,11 +681,35 @@ void mcDetectorConstruction::DefineMaterials()
     metalAl->AddElement(Al, 1);
 
     G4Material* quartz = new G4Material("quartz", 2.2*g/cm3, 2);
-    quartz->AddElement(Si, 1); quartz->AddElement(O , 2);
+    quartz->AddElement(Si, 1);
+    quartz->AddElement(O , 2);
 
     G4Material* photocathode = new G4Material("photocathode", 2.700*g/cm3, 1);
     photocathode->AddElement(Al, 1);
 
+    // scintillators
+    G4Material* GAGG = new G4Material("GAGG", 6.6*g/cm3, 4);
+    GAGG->AddElement(Gd, 3);
+    GAGG->AddElement(Al, 2);
+    GAGG->AddElement(Ga, 3);
+    GAGG->AddElement(O, 12);
+
+    G4Material* BGO = new G4Material("BGO", 7.13*g/cm3, 3);
+    BGO->AddElement(Bi, 4);
+    BGO->AddElement(Ge, 3);
+    BGO->AddElement(O, 12);
+
+    G4Material* CsI = new G4Material("CsI", 4.51*g/cm3, 2);
+    CsI->AddElement(Cs, 1);
+    CsI->AddElement(I,1);
+
+    G4Material* NaI = new G4Material("NaI", 3.67*g/cm3, 2);
+    NaI->AddElement(Na, 1);
+    NaI->AddElement(I, 1);
+
+    G4Material* BC501A = new G4Material("BC501A", 0.874*g/cm3, 2);
+    BC501A->AddElement(H, 482);
+    BC501A->AddElement(C, 398);
 
     //define gas pressure
     G4double density_Xe_1atm  = 5.8971 *mg/cm3;//noble gas detector(273K,1atm)
@@ -639,14 +725,14 @@ void mcDetectorConstruction::DefineMaterials()
 
 
     // other materials
-    G4Material* NaI = new G4Material("NaI", 3.67*g/cm3, 2);
-    NaI->AddElement(Na, 1);  NaI->AddElement(I, 1);
 
     G4Material* B4C = new G4Material("B4C", 2.52*g/cm3, 2);
-    B4C->AddElement(B, 4);  B4C->AddElement(C, 1);
+    B4C->AddElement(B, 4);
+    B4C->AddElement(C, 1);
 
     G4Material* NiC = new G4Material("NiC", 2.0*g/cm3, 2); //density ?
-    NiC->AddElement(Ni, 1);  NiC->AddElement(C, 1);
+    NiC->AddElement(Ni, 1);
+    NiC->AddElement(C, 1);
 
     G4Material* graphite = new G4Material("graphite", 2.26*g/cm3, 1);
     graphite->AddElement(C, 1);
@@ -658,28 +744,35 @@ void mcDetectorConstruction::DefineMaterials()
     metalFe->AddElement(Fe, 1);
 
     G4Material* ssteel = new G4Material("Steel", 7.7*g/cm3, 3);
-    ssteel->AddElement(C, 0.04); ssteel->AddElement(Fe, 0.88); ssteel->AddElement(Co, 0.08);
+    ssteel->AddElement(C, 0.04);
+    ssteel->AddElement(Fe, 0.88);
+    ssteel->AddElement(Co, 0.08);
 
     G4Material* Air = new G4Material("Air", 1.2929*kg/m3, 3, kStateGas, 300.00*kelvin, 1.0*atmosphere);
     //Air->AddElement(N, 0.8); Air->AddElement(O , 0.2);
-    Air->AddElement(N,0.756); Air->AddElement(O,0.231); Air->AddElement(Ar,0.013);
+    Air->AddElement(N,0.756);
+    Air->AddElement(O,0.231);
+    Air->AddElement(Ar,0.013);
 
     G4Material* LN2 = new G4Material("LN2", 0.8*g/cm3, 1, kStateLiquid, 77.*kelvin, 1.0*atmosphere);
     LN2->AddElement(N, 1);
 
     G4Material* concrete = new G4Material("concrete", 2.3*g/cm3, 6);
-    concrete->AddElement(Si, 0.227915); concrete->AddElement(O, 0.60541);   concrete->AddElement(H, 0.09972);
-    concrete->AddElement(Ca, 0.04986);  concrete->AddElement(Al, 0.014245); concrete->AddElement(Fe, 0.00285);
+    concrete->AddElement(Si, 0.227915);
+    concrete->AddElement(O, 0.60541);
+    concrete->AddElement(H, 0.09972);
+    concrete->AddElement(Ca, 0.04986);
+    concrete->AddElement(Al, 0.014245);
+    concrete->AddElement(Fe, 0.00285);
 
     G4Material* water = new G4Material("water", 1.00*g/cm3, 2);
-    water->AddElement(H, 2); water->AddElement(O, 1);
+    water->AddElement(H, 2);
+    water->AddElement(O, 1);
 
     G4Material* wood = new G4Material("wood", 0.9*g/cm3, 3);
-    wood->AddElement(H, 4); wood->AddElement(O, 1); wood->AddElement(C, 2);
-
-
-    G4Material* BC501A = new G4Material("BC501A", 0.874*g/cm3, 2);
-    BC501A->AddElement(H, 482); BC501A->AddElement(C, 398);
+    wood->AddElement(H, 4);
+    wood->AddElement(O, 1);
+    wood->AddElement(C, 2);
 
     // examples of vacuum
     /*

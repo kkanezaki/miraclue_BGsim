@@ -70,6 +70,7 @@ private:
     G4VPhysicalVolume* physWorld;
 
     G4LogicalVolume*   logicLab;
+    G4LogicalVolume*   logicScinti;
     
     //G4Tubs*            solidSensor;
     G4Box*             solidSensor;
@@ -108,6 +109,7 @@ private:
     void ConstructChamber();
     void ConstructGammaShield1();
     void ConstructTestShield();
+    void ConstructScintillator();
 
 };
 

@@ -76,8 +76,8 @@ G4bool mcSensorSD::ProcessHits(G4Step* aStep,G4TouchableHistory*)
     //if (trackID == 1) return false;
 
     // Only neutron & gamma
-    if (aTrack->GetDefinition()->GetPDGEncoding() != 2112 &&
-        aTrack->GetDefinition()->GetPDGEncoding() != 22) return false;
+    //if (aTrack->GetDefinition()->GetPDGEncoding() != 2112 &&
+    //    aTrack->GetDefinition()->GetPDGEncoding() != 22) return false;
 
     G4int NbHits = sensorCollection->entries();
     G4bool found = false;
