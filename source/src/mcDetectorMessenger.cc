@@ -105,6 +105,12 @@ mcDetectorMessenger::mcDetectorMessenger(mcDetectorConstruction* mcDet)
     GammaShield2ThicknessCmd->SetDefaultValue(5*cm);
     GammaShield2ThicknessCmd->AvailableForStates(G4State_PreInit,G4State_Idle);
 
+    ScintiMaterialCmd = new G4UIcmdWithAString("/usr/scinti/setMaterial",this);
+    ScintiMaterialCmd->SetGuidance("UI command for the scintillator material");
+    ScintiMaterialCmd->SetCandidates("BGO GAGG CsI NaI BC501A");
+    ScintiMaterialCmd->SetParameterName("scintillator material", false);
+    ScintiMaterialCmd->SetDefaultValue("BGO");
+    ScintiMaterialCmd->AvailableForStates(G4State_PreInit, G4State_Idle);
 
 }
 
@@ -149,6 +155,8 @@ void mcDetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue) {
         mcDetector->SetGammaShield1Thickness(GammaShield1ThicknessCmd->GetNewDoubleValue(newValue));
     } else if (command == GammaShield2ThicknessCmd) {
         mcDetector->SetGammaShield2Thickness(GammaShield2ThicknessCmd->GetNewDoubleValue(newValue));
+    } else if (command == ScintiMaterialCmd) {
+        mcDetector->SetScintiMaterial(newValue);
     }
 }
 

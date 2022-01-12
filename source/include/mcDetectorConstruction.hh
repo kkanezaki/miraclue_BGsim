@@ -34,6 +34,7 @@ public:
     void SetNeutronShieldType(G4String);
     void SetGammaShield1Thickness(G4double);
     void SetGammaShield2Thickness(G4double);
+    void SetScintiMaterial(G4String);
     
     G4VPhysicalVolume* Construct();
     
@@ -61,6 +62,7 @@ private:
     G4Material*        defaultMaterial;
     G4Material*        sensorMaterial;
     G4Material*        nShieldMaterial;
+    G4String           ScintiMaterial;
     
     G4double           WorldRadius;
     

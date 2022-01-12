@@ -44,6 +44,7 @@ private:
     G4UIcmdWithADoubleAndUnit* GammaShield1ThicknessCmd;
     G4UIcmdWithADoubleAndUnit* GammaShield2ThicknessCmd;
     G4UIcmdWithABool *         GammaShield2Cmd;
+    G4UIcmdWithAString*        ScintiMaterialCmd;
     
 };
 

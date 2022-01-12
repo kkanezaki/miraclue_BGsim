@@ -46,6 +46,7 @@ mcDetectorConstruction::mcDetectorConstruction()
 
     SetSensorMaterial("Ar1atm");
     SetNeutronShieldMaterial("polyethylene_LiF50");
+    SetScintiMaterial("BGO");
 
     // user limits   G4userLimits(step-length-max, track-length-max, time-cut, min-energy)
     double step_size = 0.1*mm;
@@ -515,8 +516,8 @@ void mcDetectorConstruction::ConstructTestShield()
 
 void mcDetectorConstruction::ConstructScintillator()
 {
-    G4String scinti_name = "BGO";
-    G4Material* scinti_mat = G4Material::GetMaterial(scinti_name);
+    G4Material* scinti_mat = G4Material::GetMaterial(ScintiMaterial);
+    //G4Material* scinti_mat = ScintiMaterial;
     static const G4double inch = 2.54*cm;
     G4double scinti_size;
 
@@ -528,7 +529,7 @@ void mcDetectorConstruction::ConstructScintillator()
     }
     aSensorSD->SetAnalyzer(analyzer);
 
-    if (scinti_name=="BGO"){
+    if (ScintiMaterial=="BGO"){
         G4double scinti_width  = 1*inch;
         G4double scinti_radius = 1*inch;
         G4Tubs* scinti_tube = new G4Tubs("scinti_tube", 0, scinti_radius, scinti_width/2, 0*deg, 360*deg);
@@ -853,10 +854,25 @@ void mcDetectorConstruction::SetNeutronShieldMaterial(G4String materialChoice)
     } else {
         G4cout << " mcDetectorConstruction::SetNeutronShieldMaterial:  ";
         G4cout << materialChoice << " is not in the Material Table.";
-        G4cout <<G4endl;
+        G4cout << G4endl;
     }
 }
 
+void mcDetectorConstruction::SetScintiMaterial(G4String materialChoice)
+{
+    // search the material by its name
+    G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
+    if (pttoMaterial) {
+        ScintiMaterial = materialChoice;
+        G4cout << " mcDetectorConstruction::SetScintiMaterial:  ";
+        G4cout << "scintillator material is " << materialChoice << G4endl;
+        UpdateGeometry();
+    } else {
+        G4cout << " mcDetectorConstruction::SetScintiMaterial:  ";
+        G4cout << materialChoice << " is not in the Material Table.";
+        G4cout << G4endl;
+    }
+}
 
 #include "G4FieldManager.hh"
 #include "G4TransportationManager.hh"
