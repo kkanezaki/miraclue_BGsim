@@ -8,10 +8,10 @@
 #inactivate msc
 #/process/inactivate msc
 
-/gun/position 0 0 0 cm
+/gun/position 0 0 -100 cm
 /gun/direction 0 0 1
 /gun/particle neutron
-/gun/energy 0.500 MeV
+/gun/energy 0.565 MeV
 
 #/process/em/fluo true
 #/process/em/auger true
@@ -22,5 +22,5 @@
 
 /run/initialize
 
-/run/beamOn 10000
+/run/beamOn 1000000
 

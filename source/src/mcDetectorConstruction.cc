@@ -110,7 +110,7 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
     */
 
 
-    ConstructLaboratory();
+    //ConstructLaboratory();
     //ConstructBeamShield();
     //ConstructGammaShield1();
     //ConstructSphereBeamShield();
@@ -155,24 +155,34 @@ G4VPhysicalVolume* mcDetectorConstruction::Construct()
 
     /////////////////////////////////////////  for chamber BG //////////////////////////////////////////
     /*
-    G4Material* chamber_mat = G4Material::GetMaterial("Polyeth");
-    G4double chamber_width = 10*mm; //SUS 3mm, Al 5mm, plastic 10mm
+    G4Material* chamber_mat = G4Material::GetMaterial("EVOH");
+    G4double chamber_t = 300*mm;
+    G4double chamber_width = 0.08*mm; //SUS 3mm, Al 5mm, plastic 10mm, EVOH 0.08mm
 
     G4Box* chamber_box = new G4Box("chamber", 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm, 0.5*(chamber_t+chamber_width*2)*mm);
     G4LogicalVolume* chamber_lv = new G4LogicalVolume(chamber_box, chamber_mat, "chamber_lv");
-    G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
+    //G4VisAttributes* chamber_att = new G4VisAttributes(1, blue);  chamber_lv->SetVisAttributes(chamber_att);
     //G4PVPlacement* chamber_pv = new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
-    chamber_lv->SetUserLimits(user_limit);
-    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
+    //chamber_lv->SetUserLimits(user_limit);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, physWorld, false, 0);
 
 
     G4Box* vac_box = new G4Box("vac_box", 0.5*chamber_t*mm, 0.5*chamber_t, 0.5*chamber_t);
     G4LogicalVolume* vac_lv = new G4LogicalVolume(vac_box, vac_mat, "vac_lv");
-    G4VisAttributes* vac_att = new G4VisAttributes(1, red);  vac_lv->SetVisAttributes(vac_att);
+    //G4VisAttributes* vac_att = new G4VisAttributes(1, red);  vac_lv->SetVisAttributes(vac_att);
     new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), vac_lv, "vac_pv", chamber_lv, false, 0);
-    vac_lv->SetUserLimits(user_limit);
+    //vac_lv->SetUserLimits(user_limit);
 
-    //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, world_pv, false, 0);
+    new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "chamber_pv", chamber_lv, physWorld, false, 0);
+
+    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+    mcSensorSD* aSensorSD = (mcSensorSD*)SDman->FindSensitiveDetector("mc/SensorSD");
+    if ( aSensorSD == 0){
+        aSensorSD = new mcSensorSD("mc/SensorSD");
+        SDman->AddNewDetector( aSensorSD );
+    }
+    aSensorSD->SetAnalyzer(analyzer);
+    vac_lv->SetSensitiveDetector(aSensorSD);
     */
     ////////////////////////////////////////// material test ////////////////////////////////////////////
     /*
@@ -505,7 +515,7 @@ void mcDetectorConstruction::ConstructTestShield()
 
 void mcDetectorConstruction::ConstructScintillator()
 {
-    G4String scinti_name;// = "GAGG";
+    G4String scinti_name = "BGO";
     G4Material* scinti_mat = G4Material::GetMaterial(scinti_name);
     static const G4double inch = 2.54*cm;
     G4double scinti_size;
@@ -518,14 +528,13 @@ void mcDetectorConstruction::ConstructScintillator()
     }
     aSensorSD->SetAnalyzer(analyzer);
 
-    scinti_name = "BGO";
     if (scinti_name=="BGO"){
         G4double scinti_width  = 1*inch;
         G4double scinti_radius = 1*inch;
         G4Tubs* scinti_tube = new G4Tubs("scinti_tube", 0, scinti_radius, scinti_width/2, 0*deg, 360*deg);
         G4LogicalVolume* scinti_lv = new G4LogicalVolume(scinti_tube, scinti_mat, "scinti_lv");
         //logicScinti = new G4LogicalVolume(scinti_tube, scinti_mat, "scinti_lv");
-        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicLab, false, 100);
+        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicWorld, false, 100);
         scinti_lv->SetSensitiveDetector(aSensorSD);
     } else {
         scinti_size = 1*cm;
@@ -533,7 +542,7 @@ void mcDetectorConstruction::ConstructScintillator()
         G4LogicalVolume* scinti_lv = new G4LogicalVolume(scinti_box, scinti_mat, "scinti_lv");
         //G4VisAttributes* scinti_att = new G4VisAttributes(1, outerColor);  outer_lv->SetVisAttributes(outer_att);
         //new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), "scinti_pv", scinti_lv, physWorld, false, 0);
-        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicLab, false, 100);
+        new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), scinti_lv,"scinti_pv", logicWorld, false, 100);
         scinti_lv->SetSensitiveDetector(aSensorSD);
     }
 
@@ -666,6 +675,10 @@ void mcDetectorConstruction::DefineMaterials()
     G4Material* polystyrene = new G4Material("polystyrene", 1.05*g/cm3, 2);
     polystyrene->AddElement(C,1);
     polystyrene->AddElement(H,1);
+
+    G4Material* EVOH = new G4Material("EVOH", 1.15*g/cm3, 2);
+    EVOH->AddElement(H, 2);
+    EVOH->AddElement(C, 1);
 
     G4Material* metalCu = new G4Material("metalCu", 8.960*g/cm3, 1);
     metalCu->AddElement(Cu,1);
